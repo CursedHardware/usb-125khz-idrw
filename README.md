@@ -8,7 +8,7 @@ Purchase link: <https://item.taobao.com/item.htm?id=536120855237>
 
 ## Screenshots
 
-<img src="https://i.imgur.com/MAeJP9X.png" width="320" />
+<img src="https://i.imgur.com/y5dng8P.png" width="320" />
 
 ## Thanks
 
