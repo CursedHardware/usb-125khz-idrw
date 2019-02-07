@@ -15,5 +15,8 @@
     <string name="btn_card_write">Write Card</string>
     <string name="btn_card_write_waiting">Waiting for card writing</string>
 
-    <string name="device_not_found">Device not found</string>
+    <string name="toast_device_not_found">Device not found</string>
+    <string name="toast_read_from_card">Read from card\n%s</string>
+    <string name="toast_write_card_success">Write the card successfully!\n%s</string>
+    <string name="toast_write_card_failed">Writing a card failed!</string>
 </resources>

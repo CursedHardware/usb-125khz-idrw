@@ -60,7 +60,7 @@ class MainActivity : AppCompatActivity() {
 
     private fun onConnectDevice(device: UsbDevice?) {
         if (device == null) {
-            Toast.makeText(this, R.string.device_not_found, Toast.LENGTH_LONG).show()
+            Toast.makeText(this, R.string.toast_device_not_found, Toast.LENGTH_LONG).show()
         } else if (!mUSBManager.hasPermission(device)) {
             mUSBManager.requestPermission(device, mPermissionIntent)
         } else {
@@ -75,7 +75,7 @@ class MainActivity : AppCompatActivity() {
             mCard.customerId = card.customerId
             mCard.userId = card.userId
 
-            Toast.makeText(this, "Read from card\n$card", Toast.LENGTH_LONG).show()
+            Toast.makeText(this, getString(R.string.toast_read_from_card, card), Toast.LENGTH_LONG).show()
         } catch (e: CardException) {
             Toast.makeText(this, e.message, Toast.LENGTH_SHORT).show()
         }
@@ -88,12 +88,20 @@ class MainActivity : AppCompatActivity() {
         }
         try {
             mBackend.writeCard(mCard.type, card, mCard.writeProtect)
-            Toast.makeText(this, "Write to card\n$card", Toast.LENGTH_LONG).show()
+
+            Thread.sleep(200)
+
+            val verified = card == mBackend.readCard()
+            if (verified && mCard.autoIncrement) {
+                mCard.userId += 1u
+            }
+
+            val message = if (verified)
+                getString(R.string.toast_write_card_success, card) else
+                getString(R.string.toast_write_card_failed)
+            Toast.makeText(this, message, Toast.LENGTH_LONG).show()
         } catch (e: CardException) {
             Toast.makeText(this, e.message, Toast.LENGTH_SHORT).show()
-        }
-        if (mCard.autoIncrement) {
-            mCard.userId += 1u
         }
     }
 
