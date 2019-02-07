@@ -143,6 +143,7 @@ class MainActivity : AppCompatActivity() {
         editor.putString("TYPE", mCard.type.name)
         editor.putBoolean("WRITE_PROTECT", mCard.writeProtect)
         editor.putBoolean("AUTO_INCREMENT", mCard.autoIncrement)
+        editor.putBoolean("AUTO_DECREMENT", mCard.autoDecrement)
         editor.putInt("CUSTOMER_ID", mCard.customerId.toInt())
         editor.putInt("USER_ID", mCard.userId.toInt())
         editor.apply()
@@ -155,6 +156,7 @@ class MainActivity : AppCompatActivity() {
         mCard.type = CardType.valueOf(prefs.getString("TYPE", CardType.T5577.name)!!)
         mCard.writeProtect = prefs.getBoolean("WRITE_PROTECT", false)
         mCard.autoIncrement = prefs.getBoolean("AUTO_INCREMENT", false)
+        mCard.autoDecrement = prefs.getBoolean("AUTO_DECREMENT", false)
         mCard.customerId = prefs.getInt("CUSTOMER_ID", 0u.toInt()).toUByte()
         mCard.userId = prefs.getInt("USER_ID", 0u.toInt()).toUInt()
     }
