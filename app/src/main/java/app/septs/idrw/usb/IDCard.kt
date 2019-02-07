@@ -1,7 +1,6 @@
 package app.septs.idrw.usb
 
 import java.nio.ByteBuffer
-import java.util.*
 
 @ExperimentalUnsignedTypes
 data class IDCard(var payload: ByteArray = ByteArray(0x05)) {

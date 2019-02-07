@@ -14,7 +14,10 @@ import android.support.v7.app.AppCompatActivity
 import android.widget.Toast
 import app.septs.idrw.databinding.ActivityMainBinding
 import app.septs.idrw.tools.InputFilterValueRange
-import app.septs.idrw.usb.*
+import app.septs.idrw.usb.CardException
+import app.septs.idrw.usb.CardType
+import app.septs.idrw.usb.IDCard
+import app.septs.idrw.usb.USBBackend
 
 
 @ExperimentalUnsignedTypes
@@ -72,7 +75,7 @@ class MainActivity : AppCompatActivity() {
             mCard.customerId = card.customerId
             mCard.userId = card.userId
 
-            Toast.makeText(this, "Read to\n$card", Toast.LENGTH_LONG).show()
+            Toast.makeText(this, "Read from card\n$card", Toast.LENGTH_LONG).show()
         } catch (e: CardException) {
             Toast.makeText(this, e.message, Toast.LENGTH_SHORT).show()
         }
@@ -85,7 +88,7 @@ class MainActivity : AppCompatActivity() {
         }
         try {
             mBackend.writeCard(mCard.type, card, mCard.writeProtect)
-            Toast.makeText(this, "Write to\n$card", Toast.LENGTH_LONG).show()
+            Toast.makeText(this, "Write to card\n$card", Toast.LENGTH_LONG).show()
         } catch (e: CardException) {
             Toast.makeText(this, e.message, Toast.LENGTH_SHORT).show()
         }

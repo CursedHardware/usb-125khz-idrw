@@ -3,11 +3,9 @@ package app.septs.idrw
 import android.databinding.BaseObservable
 import android.databinding.Bindable
 import app.septs.idrw.usb.CardType
-import org.parceler.Parcel
 import java.nio.ByteBuffer
 
 
-@Parcel(Parcel.Serialization.BEAN)
 @ExperimentalUnsignedTypes
 class CardViewModel : BaseObservable() {
     var connected = false
