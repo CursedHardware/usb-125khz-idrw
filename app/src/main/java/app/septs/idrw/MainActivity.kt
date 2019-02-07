@@ -11,6 +11,7 @@ import android.hardware.usb.UsbDevice
 import android.hardware.usb.UsbManager
 import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
+import android.view.WindowManager
 import android.widget.Toast
 import app.septs.idrw.databinding.ActivityMainBinding
 import app.septs.idrw.tools.InputFilterValueRange
@@ -95,6 +96,9 @@ class MainActivity : AppCompatActivity() {
             if (verified && mCard.autoIncrement) {
                 mCard.userId += 1u
             }
+            if (verified && mCard.autoDecrement) {
+                mCard.userId -= 1u
+            }
 
             val message = if (verified)
                 getString(R.string.toast_write_card_success, card) else
@@ -125,6 +129,8 @@ class MainActivity : AppCompatActivity() {
                 }
                 UsbManager.ACTION_USB_DEVICE_DETACHED -> {
                     mCard.connected = false
+                    window.decorView.clearFocus()
+                    window.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN)
                 }
             }
         }

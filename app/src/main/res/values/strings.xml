@@ -3,7 +3,8 @@
 
     <string name="label_flags">Flags</string>
     <string name="flag_write_protected">Write protect</string>
-    <string name="flag_auto_increment">Auto-increment</string>
+    <string name="flag_auto_increment">+1</string>
+    <string name="flag_auto_decrement">-1</string>
     <string name="label_type">Card Type</string>
     <string name="label_customer_id">Customer ID</string>
     <string name="label_wiegand_34">Wiegand 34</string>

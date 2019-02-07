@@ -42,8 +42,32 @@ class CardViewModel : BaseObservable() {
         }
 
     var type = CardType.T5577
+
     var writeProtect = false
+
     var autoIncrement = false
+        @Bindable
+        get() = field
+        set(value) {
+            field = value
+            if (autoDecrement && value) {
+                autoDecrement = !value
+            }
+            notifyPropertyChanged(BR.autoIncrement)
+            notifyPropertyChanged(BR.autoDecrement)
+        }
+
+    var autoDecrement = false
+        @Bindable
+        get() = field
+        set(value) {
+            field = value
+            if (autoIncrement && value) {
+                autoIncrement = !value
+            }
+            notifyPropertyChanged(BR.autoIncrement)
+            notifyPropertyChanged(BR.autoDecrement)
+        }
 
     var customerId: UByte = 0u
         set(value) {

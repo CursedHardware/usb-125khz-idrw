@@ -87,6 +87,13 @@
                     android:enabled="@{vm.available}"
                     android:text="@string/flag_auto_increment" />
 
+                <CheckBox
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:checked="@={vm.autoDecrement}"
+                    android:enabled="@{vm.available}"
+                    android:text="@string/flag_auto_decrement" />
+
             </LinearLayout>
 
             <LinearLayout
