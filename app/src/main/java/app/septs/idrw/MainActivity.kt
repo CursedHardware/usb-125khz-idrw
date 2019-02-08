@@ -6,11 +6,16 @@ import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
 import android.content.IntentFilter
+import android.content.pm.ActivityInfo
 import android.databinding.DataBindingUtil
 import android.hardware.usb.UsbDevice
 import android.hardware.usb.UsbManager
+import android.net.Uri
 import android.os.Bundle
+import android.provider.Settings
 import android.support.v7.app.AppCompatActivity
+import android.view.Menu
+import android.view.MenuItem
 import android.view.WindowManager
 import android.widget.Toast
 import app.septs.idrw.databinding.ActivityMainBinding
@@ -31,7 +36,7 @@ class MainActivity : AppCompatActivity() {
     private lateinit var mBinding: ActivityMainBinding
     private lateinit var mUSBManager: UsbManager
     private var mPermissionIntent: PendingIntent? = null
-    private lateinit var mBackend: USBBackend
+    private var mBackend: USBBackend? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -72,7 +77,7 @@ class MainActivity : AppCompatActivity() {
 
     private fun onReadCard() {
         try {
-            val card = mBackend.readCard()
+            val card = mBackend!!.readCard()
             mCard.customerId = card.customerId
             mCard.userId = card.userId
 
@@ -88,11 +93,11 @@ class MainActivity : AppCompatActivity() {
             userId = mCard.userId
         }
         try {
-            mBackend.writeCard(mCard.type, card, mCard.writeProtect)
+            mBackend?.writeCard(mCard.type, card, mCard.writeProtect)
 
             Thread.sleep(200)
 
-            val verified = card == mBackend.readCard()
+            val verified = card == mBackend?.readCard()
             if (verified && mCard.autoIncrement) {
                 mCard.userId += 1u
             }
@@ -129,11 +134,45 @@ class MainActivity : AppCompatActivity() {
                 }
                 UsbManager.ACTION_USB_DEVICE_DETACHED -> {
                     mCard.connected = false
+                    mBackend?.close()
                     window.decorView.clearFocus()
                     window.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN)
                 }
             }
         }
+    }
+
+    override fun onCreateOptionsMenu(menu: Menu?): Boolean {
+        menuInflater.inflate(R.menu.options, menu)
+        return true
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem?): Boolean {
+        when (item?.itemId) {
+            R.id.menu_clear -> {
+                mCard.customerId = 0u
+                mCard.userId = 0u
+            }
+            R.id.menu_change_orientation -> {
+                val isEnabledAutoRotate = Settings.System.getInt(contentResolver, Settings.System.ACCELEROMETER_ROTATION, 0)
+                if (isEnabledAutoRotate == 0) {
+                    Toast.makeText(this, R.string.toast_please_enable_auto_rotate, Toast.LENGTH_LONG).show()
+                    return false
+                }
+                requestedOrientation = if (requestedOrientation == ActivityInfo.SCREEN_ORIENTATION_UNSPECIFIED)
+                    ActivityInfo.SCREEN_ORIENTATION_REVERSE_PORTRAIT else
+                    ActivityInfo.SCREEN_ORIENTATION_UNSPECIFIED
+            }
+            R.id.menu_homepage -> {
+                startActivity(Intent(Intent.ACTION_VIEW).apply {
+                    data = Uri.parse(getString(R.string.project_link))
+                })
+            }
+            else -> {
+                return super.onOptionsItemSelected(item)
+            }
+        }
+        return true
     }
 
     override fun onPause() {
@@ -159,6 +198,11 @@ class MainActivity : AppCompatActivity() {
         mCard.autoDecrement = prefs.getBoolean("AUTO_DECREMENT", false)
         mCard.customerId = prefs.getInt("CUSTOMER_ID", 0u.toInt()).toUByte()
         mCard.userId = prefs.getInt("USER_ID", 0u.toInt()).toUInt()
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        mBackend?.close()
     }
 
     private fun registerUSBReceiver() {

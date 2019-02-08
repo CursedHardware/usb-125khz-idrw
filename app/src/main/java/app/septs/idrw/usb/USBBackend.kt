@@ -72,6 +72,8 @@ class USBBackend(
         if (lock) {
             protect(tagType, lock)
         }
+        // send reset packet
+        sendPacket(RequestPacket.makeControlBuzzer(1, 1))
     }
 
     private fun protect(tagType: Byte, lock: Boolean) {
@@ -107,8 +109,8 @@ class USBBackend(
                 TIMEOUT
         )
 
-        Log.d(TAG, ">>> ${toHexString(bufOut).trimEnd('0')}")
-        Log.d(TAG, "<<< ${toHexString(bufIn).trimEnd('0')}")
+        Log.d(TAG, ">>> ${toHexString(bufOut)}")
+        Log.d(TAG, "<<< ${toHexString(bufIn)}")
         return ResponsePacket.fromRawData(bufIn)
     }
 
@@ -121,5 +123,6 @@ class USBBackend(
         return buffer
                 .joinToString("") { (it.toInt() and 0xFF).toString(16).padStart(2, '0') }
                 .toUpperCase()
+                .trimEnd('0')
     }
 }
