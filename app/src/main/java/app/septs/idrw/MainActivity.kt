@@ -16,10 +16,10 @@ import android.provider.Settings
 import android.support.v7.app.AppCompatActivity
 import android.view.Menu
 import android.view.MenuItem
-import android.view.WindowManager
 import android.widget.Toast
 import app.septs.idrw.databinding.ActivityMainBinding
 import app.septs.idrw.tools.InputFilterValueRange
+import app.septs.idrw.tools.Keyboard
 import app.septs.idrw.usb.CardException
 import app.septs.idrw.usb.CardType
 import app.septs.idrw.usb.IDCard
@@ -135,8 +135,7 @@ class MainActivity : AppCompatActivity() {
                 UsbManager.ACTION_USB_DEVICE_DETACHED -> {
                     mCard.connected = false
                     mBackend?.close()
-                    window.decorView.clearFocus()
-                    window.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN)
+                    Keyboard.hidden(this@MainActivity)
                 }
             }
         }
