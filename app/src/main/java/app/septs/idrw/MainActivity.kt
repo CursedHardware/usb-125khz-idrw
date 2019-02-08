@@ -54,14 +54,12 @@ class MainActivity : AppCompatActivity() {
             writeCard.setOnClickListener { onWriteCard() }
         }
         mUSBManager = getSystemService(Context.USB_SERVICE) as UsbManager
-        mUSBManager.apply {
-            val action = "${applicationContext.packageName}.USB_PERMISSION"
-            mPermissionIntent = PendingIntent.getBroadcast(this@MainActivity, 0, Intent(action), 0)
-            registerUSBReceiver()
-            deviceList.values
-                    .find { USBBackend.isSupported(it) }
-                    .let { onConnectDevice(it) }
-        }
+        mPermissionIntent = PendingIntent.getBroadcast(
+                this@MainActivity, 0,
+                Intent("${applicationContext.packageName}.USB_PERMISSION"), 0
+        )
+        registerUSBReceiver()
+        onConnectDevice(intent.getParcelableExtra(UsbManager.EXTRA_DEVICE))
     }
 
     private fun onConnectDevice(device: UsbDevice?) {
@@ -172,6 +170,13 @@ class MainActivity : AppCompatActivity() {
             }
         }
         return true
+    }
+
+    override fun onNewIntent(intent: Intent?) {
+        super.onNewIntent(intent)
+        if (intent?.action == UsbManager.ACTION_USB_DEVICE_ATTACHED) {
+            onConnectDevice(intent.getParcelableExtra(UsbManager.EXTRA_DEVICE))
+        }
     }
 
     override fun onPause() {
