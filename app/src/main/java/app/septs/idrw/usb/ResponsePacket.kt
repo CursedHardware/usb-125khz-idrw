@@ -30,17 +30,5 @@ class ResponsePacket(val payload: ByteArray) {
             val end = packet.lastIndexOf(endTX) - 1
             return packet.slice(start..end).toByteArray()
         }
-
-        @ExperimentalUnsignedTypes
-        private fun toHexString(buffer: ByteArray): String {
-            return buffer.joinToString("") {
-                it.toUByte().toString(16).padStart(2, '0')
-            }
-        }
-    }
-
-    @ExperimentalUnsignedTypes
-    override fun toString(): String {
-        return toHexString(payload)
     }
 }
