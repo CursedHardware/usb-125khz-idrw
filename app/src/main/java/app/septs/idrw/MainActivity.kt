@@ -59,18 +59,7 @@ class MainActivity : AppCompatActivity() {
                 Intent("${applicationContext.packageName}.USB_PERMISSION"), 0
         )
         registerUSBReceiver()
-        onConnectDevice(intent.getParcelableExtra(UsbManager.EXTRA_DEVICE))
-    }
-
-    private fun onConnectDevice(device: UsbDevice?) {
-        if (device == null) {
-            Toast.makeText(this, R.string.toast_device_not_found, Toast.LENGTH_LONG).show()
-        } else if (!mUSBManager.hasPermission(device)) {
-            mUSBManager.requestPermission(device, mPermissionIntent)
-        } else {
-            mCard.connected = true
-            mBackend = USBBackend.connect(mUSBManager, device)
-        }
+        connectDevice(intent.getParcelableExtra(UsbManager.EXTRA_DEVICE))
     }
 
     private fun onReadCard() {
@@ -175,7 +164,7 @@ class MainActivity : AppCompatActivity() {
     override fun onNewIntent(intent: Intent?) {
         super.onNewIntent(intent)
         if (intent?.action == UsbManager.ACTION_USB_DEVICE_ATTACHED) {
-            onConnectDevice(intent.getParcelableExtra(UsbManager.EXTRA_DEVICE))
+            connectDevice(intent.getParcelableExtra(UsbManager.EXTRA_DEVICE))
         }
     }
 
@@ -207,6 +196,20 @@ class MainActivity : AppCompatActivity() {
     override fun onDestroy() {
         super.onDestroy()
         mBackend?.close()
+    }
+
+    private fun connectDevice(newDevice: UsbDevice?) {
+        val device = newDevice
+                ?: intent.getParcelableExtra(UsbManager.EXTRA_DEVICE)
+                ?: mUSBManager.deviceList?.values?.find { USBBackend.isSupported(it) }
+        if (device == null) {
+            Toast.makeText(this, R.string.toast_device_not_found, Toast.LENGTH_LONG).show()
+        } else if (!mUSBManager.hasPermission(device)) {
+            mUSBManager.requestPermission(device, mPermissionIntent)
+        } else {
+            mCard.connected = true
+            mBackend = USBBackend.connect(mUSBManager, device)
+        }
     }
 
     private fun registerUSBReceiver() {
