@@ -1,6 +1,6 @@
 # IDRW (Android)
 
-Android version for USB-HID 125kHz ID Reader, Support Android 6.0 and later version.
+Android version for USB-HID 125kHz ID Reader, Support Android 4.0 and later version.
 
 This application will not be published to the Application Store (Play Store, etc).
 
@@ -24,9 +24,10 @@ Protocol references
 - <https://github.com/Simpleyyt/libfunction_so_usb>
 - <https://github.com/zhangyoufu/gzgiant_LF_RFID_Reader>
 
-ID Chip product pages
-- <https://www.emmicroelectronic.com/product/lf-animal-access-ics/em4200> (128 bits, read-only)
-- <https://www.emmicroelectronic.com/product/lf-animal-access-ics/em42054305> (512 bits, read/write)
-- <https://www.emmicroelectronic.com/product/lf-animal-access-ics/em4450> (1024 bits, read/write)
-- <https://www.microchip.com/ATA5575M1> (128 bits, read/write)
-- <https://www.microchip.com/ATA5577M1C> (363 bits, read/write)
+Chip product pages
+- **EM4200** <https://www.emmicroelectronic.com/product/lf-animal-access-ics/em4200>
+- **EM4305** <https://www.emmicroelectronic.com/product/lf-animal-access-ics/em42054305>
+- **EM4450** <https://www.emmicroelectronic.com/product/lf-animal-access-ics/em4450>
+- **T5551** <https://www.microchip.com/ATA5551M>
+- **T5575** <https://www.microchip.com/ATA5575M1>
+- **T5577** <https://www.microchip.com/ATA5577M1C>
