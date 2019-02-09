@@ -1,16 +1,19 @@
 # IDRW (Android)
 
-Android version for USB-HID 125kHz ID Reader, Support Android 4.0 and later version.
+IDRW stands for ID Read and Write, and this is an app that works on Android 4.0+
+An app used for USB-HID 125kHz ID reader.
 
 This application will not be published to the Application Store (Play Store, etc).
+Therefore here is the only source to get this app.
 
+In addition, you can buy the compatible hardware from the following link.
 Hardware purchase link: <https://item.taobao.com/item.htm?id=536120855237>
 
 ## Screenshots
 
 <img src="https://i.imgur.com/wvn2OM1.png" width="320" />
 
-## Thanks
+## References
 
 Android USB Host documention
 - <https://developer.android.com/guide/topics/connectivity/usb/host>
