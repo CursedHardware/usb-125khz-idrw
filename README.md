@@ -1,6 +1,6 @@
 # IDRW (Android)
 
-Android version for USB-HID 125kHz ID Reader, Support Android 6.0 and later version.
+Android version for USB-HID 125kHz ID Reader, Support Android 4.0 and later version.
 
 This application will not be published to the Application Store (Play Store, etc).
 
