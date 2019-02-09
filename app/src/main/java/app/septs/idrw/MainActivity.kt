@@ -59,7 +59,7 @@ class MainActivity : AppCompatActivity() {
                 Intent("${applicationContext.packageName}.USB_PERMISSION"), 0
         )
         registerUSBReceiver()
-        connectDevice(intent.getParcelableExtra(UsbManager.EXTRA_DEVICE))
+        connectDevice()
     }
 
     private fun onReadCard() {
@@ -184,6 +184,7 @@ class MainActivity : AppCompatActivity() {
     override fun onResume() {
         super.onResume()
         registerUSBReceiver()
+        connectDevice()
         val prefs = getSharedPreferences(CARD_VM, Context.MODE_PRIVATE)
         mCard.type = CardType.valueOf(prefs.getString("TYPE", CardType.T5577.name)!!)
         mCard.writeProtect = prefs.getBoolean("WRITE_PROTECT", false)
@@ -198,10 +199,12 @@ class MainActivity : AppCompatActivity() {
         mBackend?.close()
     }
 
-    private fun connectDevice(newDevice: UsbDevice?) {
+    private fun connectDevice(newDevice: UsbDevice? = null) {
+        mBackend?.close()
         val device = newDevice
                 ?: intent.getParcelableExtra(UsbManager.EXTRA_DEVICE)
                 ?: mUSBManager.deviceList?.values?.find { USBBackend.isSupported(it) }
+        mCard.connected = false
         if (device == null) {
             Toast.makeText(this, R.string.toast_device_not_found, Toast.LENGTH_LONG).show()
         } else if (!mUSBManager.hasPermission(device)) {

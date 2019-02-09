@@ -8,6 +8,8 @@ This application will not be published to the Application Store (Play Store, etc
 
 Therefore here is the only source to get this app.
 
+## Recommended Hardware
+
 In addition, you can buy the compatible hardware from the following link.
 
 - <https://item.taobao.com/item.htm?id=536120855237>
