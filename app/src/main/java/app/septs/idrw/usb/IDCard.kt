@@ -3,24 +3,26 @@ package app.septs.idrw.usb
 import java.nio.ByteBuffer
 
 @ExperimentalUnsignedTypes
-data class IDCard(var payload: ByteArray = ByteArray(0x05)) {
+data class IDCard(var card: ByteArray = ByteArray(0x05)) {
     var customerId: UByte
-        get() = payload[0].toUByte()
+        get() = card[0].toUByte()
         set(value) {
-            payload[0] = value.toByte()
+            card[0] = value.toByte()
         }
 
     var userId: UInt
-        get() = ByteBuffer.wrap(payload).getInt(1).toUInt()
+        get() = ByteBuffer.wrap(card).getInt(1).toUInt()
         set(value) {
-            ByteBuffer.wrap(payload).apply {
+            ByteBuffer.wrap(card).apply {
                 putInt(1, value.toInt())
-                payload = array()
+                card = array()
             }
         }
 
     override fun toString(): String {
-        return "CID: $customerId, WG34: $userId"
+        val cid = "$customerId".padStart(3, '0')
+        val uid = "$userId".padStart(10, '0')
+        return "CID: $cid, UID: $uid"
     }
 
     override fun equals(other: Any?): Boolean {
@@ -29,12 +31,12 @@ data class IDCard(var payload: ByteArray = ByteArray(0x05)) {
 
         other as IDCard
 
-        if (!payload.contentEquals(other.payload)) return false
+        if (!card.contentEquals(other.card)) return false
 
         return true
     }
 
     override fun hashCode(): Int {
-        return payload.contentHashCode()
+        return card.contentHashCode()
     }
 }

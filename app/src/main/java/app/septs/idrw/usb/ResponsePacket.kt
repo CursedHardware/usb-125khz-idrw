@@ -1,34 +1,31 @@
 package app.septs.idrw.usb
 
-class ResponsePacket(val payload: ByteArray) {
-    companion object {
-        private fun from(packet: ByteArray): ResponsePacket {
-            val dataLength = packet[1]
-            val status = packet[2]
-            val payload = packet
-                    .slice(3 until 3 + (dataLength - 1))
-                    .toByteArray()
-            if (status == 0x01.toByte()) {
-                throw CardException(payload[0])
-            }
-            return ResponsePacket(payload)
-        }
+@ExperimentalUnsignedTypes
+class ResponsePacket(packet: ByteArray) {
+    private val stationId: Byte
+    private val status: Byte
+    val payload: ByteArray
 
-        fun fromRawData(packet: ByteArray): ResponsePacket {
-            val buffer = unwrapPacket(unwrapHeader(packet))
-            return from(buffer)
-        }
+    init {
+        // payload data structure
+        // 0: station id (1 byte)
+        // 1: response length (status + payload)
+        // 2: response status (1 byte)
+        // 3: response payload (1 ... n)
+        val unwrapped = unwrapPacket(packet)
+        this.stationId = unwrapped[0]
+        val length = unwrapped[1] - 1
+        this.status = unwrapped[2]
+        this.payload = unwrapped.sliceArray(3 until 3 + length)
+    }
 
-        private fun unwrapHeader(packet: ByteArray): ByteArray {
-            return packet.slice(8 until packet.size).toByteArray()
+    fun throwException() {
+        if (status == 0x01.toByte()) {
+            throw CardException(payload[0])
         }
+    }
 
-        private fun unwrapPacket(packet: ByteArray): ByteArray {
-            val startTX = 0x02.toByte()
-            val endTX = 0x03.toByte()
-            val start = packet.indexOf(startTX) + 1
-            val end = packet.lastIndexOf(endTX) - 1
-            return packet.slice(start..end).toByteArray()
-        }
+    override fun toString(): String {
+        return "${toHexString(payload)} (Status: $status, Station ID: $stationId)"
     }
 }

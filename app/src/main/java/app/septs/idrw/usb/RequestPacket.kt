@@ -2,87 +2,49 @@ package app.septs.idrw.usb
 
 import kotlin.experimental.xor
 
-class RequestPacket {
+@ExperimentalUnsignedTypes
+class RequestPacket(
+        private val command: Command,
+        private val payload: Array<Byte>,
+        private val stationId: Byte = 0x00
+) {
     companion object {
-        private const val DEFAULT_STATION_ID = 0x00.toByte()
+        fun makeGetSNR() =
+                RequestPacket(Command.GET_SNR, arrayOf(0x00, 0x00))
 
-        fun makeGetSNR(): RequestPacket {
-            return RequestPacket(
-                    0x25.toByte(),
-                    arrayOf(0x00, 0x00)
-            )
+        fun makeControlBuzzer(cycle: Byte = 1, count: Byte = 1) =
+                RequestPacket(Command.CONTROL_BUZZER, arrayOf(cycle, count))
+
+        fun makeProtect(type: CardType, lock: Boolean) = when (type) {
+            CardType.T5577 -> makeControlBuzzer(if (lock) 6 else 4)
+            CardType.EM4305 -> makeControlBuzzer(if (lock) 7 else 5)
         }
 
-        fun makeControlBuzzer(cycle: Int, count: Int): RequestPacket {
-            return RequestPacket(
-                    0x89.toByte(),
-                    arrayOf(cycle.toByte(), count.toByte())
-            )
-        }
-
-        fun makeWrite(tagType: Byte, payload: ByteArray): RequestPacket {
-            return RequestPacket(
-                    0x21.toByte(),
-                    arrayOf(
-                            0x00, // Write mode control
-                            0x01, // Length
-                            0x01, // Start address
-                            tagType,
-                            payload[0], // EM4100 tag number
-                            payload[1], // EM4100 tag number
-                            payload[2], // EM4100 tag number
-                            payload[3], // EM4100 tag number
-                            payload[4], // EM4100 tag number
-                            0x80.toByte() // unknown
-                    )
-            )
-        }
-
-        fun build(packet: RequestPacket): ByteArray {
-            return wrapHeader(wrapPacket(packet.toPacket()), packet.command)
-        }
-
-        private fun wrapHeader(packet: ByteArray, command: Byte): ByteArray {
-            val header = arrayOf<Byte>(
-                    0x01, 0x00, 0x00, 0x00,
-                    0x00, 0x00, 0x08, 0x00
-            )
-            if (command == 0x21.toByte()) { // MF_WRITE
-                header[6] = 0x1F
+        fun makeWrite(type: CardType, card: IDCard): RequestPacket {
+            val payload = ArrayList<Byte>().apply {
+                add(0x00) // MF_WRITE mode control
+                add(0x01) // Length
+                add(0x01) // Start address
+                add(type.code)
+                addAll(card.card.toTypedArray())
+                add(0x80.toByte())
             }
-            return header.toByteArray() + packet
-        }
-
-        private fun wrapPacket(packet: ByteArray): ByteArray {
-            val startTX = arrayOf<Byte>(0x02).toByteArray()
-            val endTX = arrayOf<Byte>(0x03).toByteArray()
-            return (startTX + packet + endTX)
-        }
-
-        private fun getCRC8(buffer: ByteArray): Byte {
-            return buffer.reduce { checksum, it -> checksum xor it }
+            return RequestPacket(Command.MF_WRITE, payload.toTypedArray())
         }
     }
-
-    private val stationId: Byte
-    private val command: Byte
-    private val payload: Array<Byte>
-
-    constructor(stationId: Byte, command: Byte, payload: Array<Byte>) {
-        this.stationId = stationId
-        this.command = command
-        this.payload = payload
-    }
-
-    constructor(command: Byte, payload: Array<Byte>) : this(DEFAULT_STATION_ID, command, payload)
 
     fun toPacket(): ByteArray {
-        var buffer = emptyArray<Byte>()
-        buffer += stationId
-        buffer += (payload.size + 1).toByte()
-        buffer += command
-        buffer += payload
-        buffer += getCRC8(buffer.toByteArray())
-        return buffer.toByteArray()
+        val packet = ArrayList<Byte>().apply {
+            add(stationId)
+            add((payload.size + 1).toByte())
+            add(command.value)
+            addAll(payload)
+            add(reduce(Byte::xor)) // CRC8
+        }
+        return wrapPacket(packet.toByteArray(), command)
+    }
+
+    override fun toString(): String {
+        return "${toHexString(payload)} (Command: $command, Station ID: $stationId)"
     }
 }

@@ -76,7 +76,7 @@
                 <CheckBox
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:checked="@={vm.writeProtect}"
+                    android:checked="@={vm.lock}"
                     android:enabled="@{vm.available}"
                     android:text="@string/flag_write_protected" />
 
@@ -198,14 +198,14 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:enabled="@{vm.available}"
-                android:text="@{vm.reading ? @string/btn_card_read_waiting : @string/btn_card_read}" />
+                android:text="@string/btn_card_read" />
 
             <Button
                 android:id="@+id/writeCard"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:enabled="@{vm.available}"
-                android:text="@{vm.writing ? @string/btn_card_write_waiting : @string/btn_card_write}" />
+                android:text="@string/btn_card_write" />
         </LinearLayout>
     </ScrollView>
 </layout>

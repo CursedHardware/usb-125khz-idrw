@@ -1,19 +1,15 @@
 package app.septs.idrw
 
 
-import android.app.PendingIntent
-import android.content.BroadcastReceiver
+import android.content.ClipData
+import android.content.ClipboardManager
 import android.content.Context
 import android.content.Intent
-import android.content.IntentFilter
 import android.content.pm.ActivityInfo
 import android.databinding.DataBindingUtil
-import android.hardware.usb.UsbDevice
-import android.hardware.usb.UsbManager
 import android.net.Uri
 import android.os.Bundle
 import android.provider.Settings
-import android.support.v7.app.AppCompatActivity
 import android.view.Menu
 import android.view.MenuItem
 import android.widget.Toast
@@ -23,20 +19,16 @@ import app.septs.idrw.tools.Keyboard
 import app.septs.idrw.usb.CardException
 import app.septs.idrw.usb.CardType
 import app.septs.idrw.usb.IDCard
-import app.septs.idrw.usb.USBBackend
 
 
 @ExperimentalUnsignedTypes
-class MainActivity : AppCompatActivity() {
+class MainActivity : USBActivity() {
     companion object {
         private const val CARD_VM = "CARD_VM"
     }
 
     private var mCard = CardViewModel()
     private lateinit var mBinding: ActivityMainBinding
-    private lateinit var mUSBManager: UsbManager
-    private var mPermissionIntent: PendingIntent? = null
-    private var mBackend: USBBackend? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -53,13 +45,6 @@ class MainActivity : AppCompatActivity() {
             readCard.setOnClickListener { onReadCard() }
             writeCard.setOnClickListener { onWriteCard() }
         }
-        mUSBManager = getSystemService(Context.USB_SERVICE) as UsbManager
-        mPermissionIntent = PendingIntent.getBroadcast(
-                this@MainActivity, 0,
-                Intent("${applicationContext.packageName}.USB_PERMISSION"), 0
-        )
-        registerUSBReceiver()
-        connectDevice()
     }
 
     private fun onReadCard() {
@@ -80,16 +65,14 @@ class MainActivity : AppCompatActivity() {
             userId = mCard.userId
         }
         try {
-            mBackend?.writeCard(mCard.type, card, mCard.writeProtect)
+            mBackend!!.writeCard(mCard.type, card, mCard.lock)
 
             Thread.sleep(200)
 
-            val verified = card == mBackend?.readCard()
-            if (verified && mCard.autoIncrement) {
-                mCard.userId += 1u
-            }
-            if (verified && mCard.autoDecrement) {
-                mCard.userId -= 1u
+            val verified = card == mBackend!!.readCard()
+            when {
+                verified && mCard.autoIncrement -> mCard.userId += 1u
+                verified && mCard.autoDecrement -> mCard.userId -= 1u
             }
 
             val message = if (verified)
@@ -98,33 +81,6 @@ class MainActivity : AppCompatActivity() {
             Toast.makeText(this, message, Toast.LENGTH_LONG).show()
         } catch (e: CardException) {
             Toast.makeText(this, e.message, Toast.LENGTH_SHORT).show()
-        }
-    }
-
-    private val mUSBReceiver = object : BroadcastReceiver() {
-        override fun onReceive(context: Context?, intent: Intent?) {
-            if (intent == null) {
-                return
-            }
-            val device = intent.getParcelableExtra<UsbDevice>(UsbManager.EXTRA_DEVICE)
-            val granted = intent.getBooleanExtra(UsbManager.EXTRA_PERMISSION_GRANTED, false)
-            when (intent.action) {
-                "${applicationContext.packageName}.USB_PERMISSION" -> {
-                    mCard.connected = granted
-                }
-                UsbManager.ACTION_USB_DEVICE_ATTACHED -> {
-                    if (!(granted && mUSBManager.hasPermission(device))) {
-                        mUSBManager.requestPermission(device, mPermissionIntent)
-                        return
-                    }
-                    mCard.connected = true
-                }
-                UsbManager.ACTION_USB_DEVICE_DETACHED -> {
-                    mCard.connected = false
-                    mBackend?.close()
-                    Keyboard.hidden(this@MainActivity)
-                }
-            }
         }
     }
 
@@ -139,9 +95,16 @@ class MainActivity : AppCompatActivity() {
                 mCard.customerId = 0u
                 mCard.userId = 0u
             }
+            R.id.menu_copy -> {
+                (getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager).apply {
+                    val payload = "${mCard.userId}".padStart(10, '0')
+                    primaryClip = ClipData.newPlainText("IDRW", payload)
+                }
+                Toast.makeText(this, R.string.toast_copies_id_to_clipboard, Toast.LENGTH_LONG).show()
+            }
             R.id.menu_change_orientation -> {
-                val isEnabledAutoRotate = Settings.System.getInt(contentResolver, Settings.System.ACCELEROMETER_ROTATION, 0)
-                if (isEnabledAutoRotate == 0) {
+                val isEnabled = Settings.System.getInt(contentResolver, Settings.System.ACCELEROMETER_ROTATION, 0)
+                if (isEnabled == 0) {
                     Toast.makeText(this, R.string.toast_please_enable_auto_rotate, Toast.LENGTH_LONG).show()
                     return false
                 }
@@ -161,19 +124,11 @@ class MainActivity : AppCompatActivity() {
         return true
     }
 
-    override fun onNewIntent(intent: Intent?) {
-        super.onNewIntent(intent)
-        if (intent?.action == UsbManager.ACTION_USB_DEVICE_ATTACHED) {
-            connectDevice(intent.getParcelableExtra(UsbManager.EXTRA_DEVICE))
-        }
-    }
-
     override fun onPause() {
         super.onPause()
-        unregisterReceiver(mUSBReceiver)
         val editor = getSharedPreferences(CARD_VM, Context.MODE_PRIVATE).edit()
         editor.putString("TYPE", mCard.type.name)
-        editor.putBoolean("WRITE_PROTECT", mCard.writeProtect)
+        editor.putBoolean("LOCK", mCard.lock)
         editor.putBoolean("AUTO_INCREMENT", mCard.autoIncrement)
         editor.putBoolean("AUTO_DECREMENT", mCard.autoDecrement)
         editor.putInt("CUSTOMER_ID", mCard.customerId.toInt())
@@ -183,43 +138,19 @@ class MainActivity : AppCompatActivity() {
 
     override fun onResume() {
         super.onResume()
-        registerUSBReceiver()
-        connectDevice()
         val prefs = getSharedPreferences(CARD_VM, Context.MODE_PRIVATE)
         mCard.type = CardType.valueOf(prefs.getString("TYPE", CardType.T5577.name)!!)
-        mCard.writeProtect = prefs.getBoolean("WRITE_PROTECT", false)
+        mCard.lock = prefs.getBoolean("LOCK", false)
         mCard.autoIncrement = prefs.getBoolean("AUTO_INCREMENT", false)
         mCard.autoDecrement = prefs.getBoolean("AUTO_DECREMENT", false)
         mCard.customerId = prefs.getInt("CUSTOMER_ID", 0u.toInt()).toUByte()
         mCard.userId = prefs.getInt("USER_ID", 0u.toInt()).toUInt()
     }
 
-    override fun onDestroy() {
-        super.onDestroy()
-        mBackend?.close()
-    }
-
-    private fun connectDevice(newDevice: UsbDevice? = null) {
-        mBackend?.close()
-        val device = newDevice
-                ?: intent.getParcelableExtra(UsbManager.EXTRA_DEVICE)
-                ?: mUSBManager.deviceList?.values?.find { USBBackend.isSupported(it) }
-        mCard.connected = false
-        if (device == null) {
-            Toast.makeText(this, R.string.toast_device_not_found, Toast.LENGTH_LONG).show()
-        } else if (!mUSBManager.hasPermission(device)) {
-            mUSBManager.requestPermission(device, mPermissionIntent)
-        } else {
-            mCard.connected = true
-            mBackend = USBBackend.connect(mUSBManager, device)
+    override fun setConnected(connected: Boolean) {
+        if (!connected) {
+            Keyboard.hidden(this)
         }
-    }
-
-    private fun registerUSBReceiver() {
-        registerReceiver(mUSBReceiver, IntentFilter().apply {
-            addAction("${applicationContext.packageName}.USB_PERMISSION")
-            addAction(UsbManager.ACTION_USB_DEVICE_ATTACHED)
-            addAction(UsbManager.ACTION_USB_DEVICE_DETACHED)
-        })
+        mCard.connected = connected
     }
 }

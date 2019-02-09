@@ -14,36 +14,13 @@ class CardViewModel : BaseObservable() {
             notifyPropertyChanged(BR.available)
         }
 
-    var reading = false
-        @Bindable
-        get() = field
-        set(value) {
-            field = value
-            notifyPropertyChanged(BR.reading)
-            notifyPropertyChanged(BR.available)
-        }
-
-    var writing = false
-        @Bindable
-        get() = field
-        set(value) {
-            field = value
-            notifyPropertyChanged(BR.writing)
-            notifyPropertyChanged(BR.available)
-        }
-
     val available: Boolean
         @Bindable
-        get() {
-            if (!connected) {
-                return false
-            }
-            return !(reading || writing)
-        }
+        get() = connected
 
     var type = CardType.T5577
 
-    var writeProtect = false
+    var lock = false
 
     var autoIncrement = false
         @Bindable
@@ -74,6 +51,7 @@ class CardViewModel : BaseObservable() {
             field = value
             notifyPropertyChanged(BR.customerIdAsString)
         }
+
     var customerIdAsString: String
         @Bindable
         get() = customerId.toString()
