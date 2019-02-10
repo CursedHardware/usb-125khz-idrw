@@ -92,14 +92,15 @@ abstract class USBActivity : AppCompatActivity() {
                 ?: intent.getParcelableExtra(UsbManager.EXTRA_DEVICE)
                 ?: mUSBManager.deviceList?.values?.find(USBBackend.Companion::isSupported)
         if (device == null) {
+            setConnected(false)
             Toast.makeText(this, R.string.toast_device_not_found, Toast.LENGTH_LONG).show()
         } else if (!mUSBManager.hasPermission(device)) {
+            setConnected(false)
             mUSBManager.requestPermission(device, mUSBPermissionIntent)
         } else {
-            mBackend = USBBackend.connect(mUSBManager, device)
             setConnected(true)
+            mBackend = USBBackend.connect(mUSBManager, device)
         }
-        setConnected(false)
     }
 
     protected abstract fun setConnected(connected: Boolean)

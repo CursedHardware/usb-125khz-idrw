@@ -67,6 +67,7 @@ class CardViewModel : BaseObservable() {
             notifyPropertyChanged(BR.userIdAsWG26FacilityCode)
             notifyPropertyChanged(BR.userIdAsWG26IDCode)
         }
+
     var userIdAsWG34: String
         @Bindable
         get() = userId.toString()
@@ -76,39 +77,43 @@ class CardViewModel : BaseObservable() {
             notifyPropertyChanged(BR.userIdAsWG26FacilityCode)
             notifyPropertyChanged(BR.userIdAsWG26IDCode)
         }
+
     var userIdAsWG26FacilityCode: String
         @Bindable
-        get() {
-            val buffer = ByteBuffer.allocate(4)
-            buffer.putInt(userId.toInt())
-            return buffer.get(1).toUByte().toString()
+        get() = ByteBuffer.allocate(4).let {
+            it.putInt(userId.toInt())
+            return@let it.get(1).toUByte().toString()
         }
         set(value) {
-            val code = value.toUByteOrNull()
-            val buffer = ByteBuffer.allocate(4)
-            buffer.putInt(userId.toInt())
-            buffer.put(1, (code ?: 0u).toByte())
-            userId = buffer.getInt(0).toUInt()
-            notifyPropertyChanged(BR.userIdAsWG34)
-            notifyPropertyChanged(BR.userIdAsWG26FacilityCode)
-            notifyPropertyChanged(BR.userIdAsWG26IDCode)
+            ByteBuffer.allocate(4).let {
+                val code = value.toUByteOrNull() ?: 0u
+                it.putInt(userId.toInt())
+                it.put(1, code.toByte())
+                userId = it.getInt(0).toUInt()
+
+                notifyPropertyChanged(BR.userIdAsWG34)
+                notifyPropertyChanged(BR.userIdAsWG26FacilityCode)
+                notifyPropertyChanged(BR.userIdAsWG26IDCode)
+            }
         }
+
     var userIdAsWG26IDCode: String
         @Bindable
-        get() {
-            val buffer = ByteBuffer.allocate(4)
-            buffer.putInt(userId.toInt())
-            return buffer.getShort(2).toUShort().toString()
+        get() = ByteBuffer.allocate(4).let {
+            it.putInt(userId.toInt())
+            return@let it.getShort(2).toUShort().toString()
         }
         set(value) {
-            val code = value.toUShortOrNull()
-            val buffer = ByteBuffer.allocate(4)
-            buffer.putInt(userId.toInt())
-            buffer.putShort(2, (code ?: 0u).toShort())
-            userId = buffer.getInt(0).toUInt()
-            notifyPropertyChanged(BR.userIdAsWG34)
-            notifyPropertyChanged(BR.userIdAsWG26FacilityCode)
-            notifyPropertyChanged(BR.userIdAsWG26IDCode)
+            ByteBuffer.allocate(4).let {
+                val code = value.toUShortOrNull() ?: 0u
+                it.putInt(userId.toInt())
+                it.putShort(2, code.toShort())
+                userId = it.getInt(0).toUInt()
+
+                notifyPropertyChanged(BR.userIdAsWG34)
+                notifyPropertyChanged(BR.userIdAsWG26FacilityCode)
+                notifyPropertyChanged(BR.userIdAsWG26IDCode)
+            }
         }
 }
 
