@@ -8,6 +8,8 @@ This application will not be published to the Application Store (Play Store, etc
 
 Therefore here is the only source to get this app.
 
+<https://rink.hockeyapp.net/apps/f46f81f8a00b4260afa2a12ca0fba153>
+
 ## Recommended Hardware
 
 In addition, you can buy the compatible hardware from the following link.
@@ -33,6 +35,8 @@ Protocol references
 - <https://github.com/merbanan/rfid_app>
 - <https://github.com/Simpleyyt/libfunction_so_usb>
 - <https://github.com/zhangyoufu/gzgiant_LF_RFID_Reader>
+- **EM4100 Protocol** <http://www.priority1design.com.au/em4100_protocol.html>
+- **T5557 Protocol** <http://www.priority1design.com.au/t5557_rfid_transponder.html>
 
 Chip product pages
 - **EM4200** <https://www.emmicroelectronic.com/product/lf-animal-access-ics/em4200>
