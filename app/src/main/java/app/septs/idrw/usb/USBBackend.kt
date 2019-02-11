@@ -7,7 +7,7 @@ import android.hardware.usb.UsbManager
 import android.util.Log
 import app.septs.idrw.usb.RequestPacket.Companion.makeControlBuzzer
 import app.septs.idrw.usb.RequestPacket.Companion.makeGetSNR
-import app.septs.idrw.usb.RequestPacket.Companion.makeProtect
+import app.septs.idrw.usb.RequestPacket.Companion.makeLock
 import app.septs.idrw.usb.RequestPacket.Companion.makeWrite
 import java.io.Closeable
 
@@ -48,9 +48,9 @@ class USBBackend(private val conn: UsbDeviceConnection, private val face: UsbInt
     fun readCard() = IDCard(sendPacket(makeGetSNR()).payload)
 
     fun writeCard(type: CardType, card: IDCard, lock: Boolean) {
-        sendPacket(makeProtect(type, false))
+        sendPacket(makeLock(type, false))
         sendPacket(makeWrite(type, card))
-        sendPacket(makeProtect(type, lock))
+        sendPacket(makeLock(type, lock))
         sendPacket(makeControlBuzzer())
     }
 

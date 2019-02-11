@@ -7,7 +7,7 @@ android {
     compileSdkVersion 28
     defaultConfig {
         applicationId "app.septs.idrw"
-        minSdkVersion 14
+        minSdkVersion 15
         targetSdkVersion 28
         versionCode 3
         versionName "1.2"
@@ -21,6 +21,11 @@ android {
     dataBinding {
         enabled = true
     }
+    defaultConfig {
+        manifestPlaceholders = [
+                HOCKEYAPP_APP_ID: "f46f81f8a00b4260afa2a12ca0fba153"
+        ]
+    }
 }
 
 dependencies {
@@ -29,4 +34,5 @@ dependencies {
     implementation 'com.android.support:appcompat-v7:28.0.0'
     implementation 'com.android.support:design:28.0.0'
     implementation 'com.android.support.constraint:constraint-layout:2.0.0-alpha3'
+    implementation 'net.hockeyapp.android:HockeySDK:5.1.1'
 }
