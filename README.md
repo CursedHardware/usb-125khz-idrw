@@ -28,8 +28,7 @@ Android USB Host documention
 - <https://developer.android.com/guide/topics/connectivity/usb/host>
 
 Protocol references
-- <https://www.usb.org/hid>
-- <https://wenku.baidu.com/view/405cfb08f78a6529647d53af.html> ([PDF](docs/IFD510.pdf))
+- [docs/IFDProtocol.md](docs/IFDProtocol.md)
 - <https://blog.csdn.net/TonnyBrown/article/details/75200601> ([PDF](docs/IDCardCopyTutorial.pdf))
 - <https://github.com/charlysan/pyrfidhid>
 - <https://github.com/merbanan/rfid_app>
