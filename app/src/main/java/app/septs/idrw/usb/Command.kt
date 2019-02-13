@@ -1,7 +1,9 @@
 package app.septs.idrw.usb
 
-enum class Command(val value: Byte) {
-    MF_WRITE(0x21.toByte()),
-    MF_GET_SNR(0x25.toByte()),
-    CONTROL_BUZZER(0x89.toByte())
+enum class Command(code: Int) {
+    MF_WRITE(0x21),
+    MF_GET_SNR(0x25),
+    CONTROL_BUZZER(0x89);
+
+    val code: Byte = code.toByte()
 }

@@ -35,8 +35,8 @@ class RequestPacket(
     fun toPacket(): ByteArray {
         var packet = byteArrayOf()
         packet += stationId
-        packet += (payload.size.toByte() + 1).toByte() // length
-        packet += command.value
+        packet += (payload.size + 1).toByte() // length
+        packet += command.code
         packet += payload
         packet += packet.reduce(Byte::xor) // checksum (crc8)
         return wrapPacket(packet, command)

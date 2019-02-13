@@ -11,7 +11,7 @@ class ResponsePacket(packet: ByteArray) {
         // 0: station id (1 byte)
         // 1: response length (status + payload)
         // 2: response status (1 byte)
-        // 3: response payload (1 ... n)
+        // 3: response payload (3 ... (3 + (n - 1)))
         val unwrapped = unwrapPacket(packet)
         this.stationId = unwrapped[0]
         val length = unwrapped[1] - 1
