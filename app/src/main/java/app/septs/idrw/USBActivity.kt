@@ -1,6 +1,5 @@
 package app.septs.idrw
 
-import android.annotation.SuppressLint
 import android.app.PendingIntent
 import android.content.BroadcastReceiver
 import android.content.Context
@@ -13,7 +12,6 @@ import android.support.v7.app.AppCompatActivity
 import android.widget.Toast
 import app.septs.idrw.usb.USBBackend
 
-@SuppressLint("Registered")
 @kotlin.ExperimentalUnsignedTypes
 abstract class USBActivity : AppCompatActivity() {
     private lateinit var mUSBManager: UsbManager
