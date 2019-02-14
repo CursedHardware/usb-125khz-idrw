@@ -121,10 +121,10 @@ Card payload:
     See MF_GET_SNR returns DATA
 
 Receive data (successfully)
-+-----------+------+---------------+
-| STATUS    | 0x00 | OK            |
-| DATA[0-3] |      | Serial number |
-+-----------+------+---------------+
++---------+------+--------------+
+| STATUS  | 0x00 | OK           |
+| DATA[0] | 0x80 | Successfully |
++---------+------+--------------+
 
 Receive data (failed)
 +---------+------+-----------------+
