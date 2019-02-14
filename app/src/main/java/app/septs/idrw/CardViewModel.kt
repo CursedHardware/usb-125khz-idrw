@@ -27,11 +27,8 @@ class CardViewModel : BaseObservable() {
         get() = field
         set(value) {
             field = value
-            if (autoDecrement && value) {
-                autoDecrement = !value
-            }
+            if (autoDecrement && value) autoDecrement = false
             notifyPropertyChanged(BR.autoIncrement)
-            notifyPropertyChanged(BR.autoDecrement)
         }
 
     var autoDecrement = false
@@ -39,10 +36,7 @@ class CardViewModel : BaseObservable() {
         get() = field
         set(value) {
             field = value
-            if (autoIncrement && value) {
-                autoIncrement = !value
-            }
-            notifyPropertyChanged(BR.autoIncrement)
+            if (autoIncrement && value) autoIncrement = false
             notifyPropertyChanged(BR.autoDecrement)
         }
 
