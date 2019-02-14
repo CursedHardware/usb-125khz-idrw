@@ -15,10 +15,8 @@ class RequestPacket(
         fun makeControlBuzzer(cycle: Byte = 1, count: Byte = 1) =
                 RequestPacket(Command.CONTROL_BUZZER, byteArrayOf(cycle, count))
 
-        fun makeLock(type: CardType, lock: Boolean) = when (type) {
-            CardType.T5577 -> makeControlBuzzer(if (lock) 6 else 4)
-            CardType.EM4305 -> makeControlBuzzer(if (lock) 7 else 5)
-        }
+        fun makeLock(type: CardType, lock: Boolean) =
+                makeControlBuzzer(type.getLockCode(lock))
 
         fun makeWrite(type: CardType, card: IDCard): RequestPacket {
             var packet = byteArrayOf()
@@ -27,7 +25,6 @@ class RequestPacket(
             packet += 0x01 // Start address
             packet += type.code
             packet += card.card
-            packet += 0x80.toByte() // unknown
             return RequestPacket(Command.MF_WRITE, packet)
         }
     }

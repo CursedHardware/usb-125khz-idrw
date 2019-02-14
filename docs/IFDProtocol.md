@@ -112,7 +112,6 @@ Send data
 | DATA[2]    | 0x01 | Start address         |
 | DATA[3]    |      | Card type             |
 | DATA[4..9] |      | Card payload          |
-| DATA[10]   | 0x80 | Unknown               |
 +------------+------+-----------------------+
 Card type:
     T5577:  0x00
