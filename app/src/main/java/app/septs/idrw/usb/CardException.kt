@@ -1,8 +1,9 @@
 package app.septs.idrw.usb
 
+@ExperimentalUnsignedTypes
 class CardException(private val code: Byte) : Exception() {
-    override val message: String?
-        get() = when (code.toInt()) {
+    override val message: String
+        get() = when (code.toUByte().toInt()) {
             0x81 -> "Set failed"
             0x82 -> "Communication timeout"
             0x83 -> "Card not found"
