@@ -115,8 +115,8 @@ Send data
 | DATA[10]   | 0x80 | Unknown               |
 +------------+------+-----------------------+
 Card type:
-    0x00: T5577
-    0x02: EM4305
+    T5577:  0x00
+    EM4305: 0x02
 Card payload:
     See MF_GET_SNR returns DATA
 
@@ -224,4 +224,21 @@ Buzzer Count:
 | 0x85 | Command format error  |
 | 0x8F | Command not found     |
 +------+-----------------------+
+```
+
+## Control Logic
+
+### Read Card
+```
+Send MF_GET_SNR
+```
+
+### Write Card
+```
+Send LOCK_CARD (Unlock)
+Send MF_WRITE
+Send LOCK_CARD for lock
+Send RESET_READER
+
+# Wait 200ms to read the card
 ```
