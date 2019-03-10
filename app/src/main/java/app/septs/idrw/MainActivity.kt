@@ -1,8 +1,6 @@
 package app.septs.idrw
 
 
-import android.content.ClipData
-import android.content.ClipboardManager
 import android.content.Context
 import android.content.Intent
 import android.content.pm.ActivityInfo
@@ -53,35 +51,30 @@ class MainActivity : USBActivity() {
 
     private fun onReadCard() {
         try {
-            val card = mBackend!!.readCard()
-            mCard.customerId = card.customerId
-            mCard.userId = card.userId
+            mCard.idCard = mBackend?.readCard() ?: return
 
-            Toast.makeText(this, getString(R.string.toast_read_from_card, card), Toast.LENGTH_LONG).show()
+            Toast.makeText(this, getString(R.string.toast_read_from_card, mCard.idCard), Toast.LENGTH_LONG).show()
         } catch (e: CardException) {
             Toast.makeText(this, e.message, Toast.LENGTH_SHORT).show()
         }
     }
 
     private fun onWriteCard() {
-        val card = IDCard().apply {
-            customerId = mCard.customerId
-            userId = mCard.userId
-        }
         try {
-            mBackend!!.writeCard(mCard.type, card, mCard.lock)
+            mBackend?.writeCard(mCard.type, mCard.idCard, mCard.lock)
 
             Thread.sleep(200)
 
-            val verified = card == mBackend!!.readCard()
-            when {
-                verified && mCard.autoIncrement -> mCard.userId += 1u
-                verified && mCard.autoDecrement -> mCard.userId -= 1u
-            }
-
-            val message = if (verified)
-                getString(R.string.toast_write_card_success, card) else
+            val message = if (mCard.idCard == mBackend?.readCard()) {
+                when {
+                    mCard.autoIncrement -> mCard.idCard += 1u
+                    mCard.autoDecrement -> mCard.idCard -= 1u
+                }
+                mCard.notifyChange()
+                getString(R.string.toast_write_card_success, mCard.idCard)
+            } else {
                 getString(R.string.toast_write_card_failed)
+            }
             Toast.makeText(this, message, Toast.LENGTH_LONG).show()
         } catch (e: CardException) {
             Toast.makeText(this, e.message, Toast.LENGTH_SHORT).show()
@@ -96,15 +89,7 @@ class MainActivity : USBActivity() {
     override fun onOptionsItemSelected(item: MenuItem?): Boolean {
         when (item?.itemId) {
             R.id.menu_clear -> {
-                mCard.customerId = 0u
-                mCard.userId = 0u
-            }
-            R.id.menu_copy -> {
-                (getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager).apply {
-                    val payload = "${mCard.userId}".padStart(10, '0')
-                    primaryClip = ClipData.newPlainText("IDRW", payload)
-                }
-                Toast.makeText(this, R.string.toast_copies_id_to_clipboard, Toast.LENGTH_LONG).show()
+                mCard.idCard = IDCard()
             }
             R.id.menu_change_orientation -> {
                 val isEnabled = Settings.System.getInt(contentResolver, Settings.System.ACCELEROMETER_ROTATION, 0)
@@ -135,8 +120,8 @@ class MainActivity : USBActivity() {
         editor.putBoolean("LOCK", mCard.lock)
         editor.putBoolean("AUTO_INCREMENT", mCard.autoIncrement)
         editor.putBoolean("AUTO_DECREMENT", mCard.autoDecrement)
-        editor.putInt("CUSTOMER_ID", mCard.customerId.toInt())
-        editor.putInt("USER_ID", mCard.userId.toInt())
+        editor.putInt("CUSTOMER_ID", mCard.idCard.customerId.toInt())
+        editor.putInt("USER_ID", mCard.idCard.wiegand34.toInt())
         editor.apply()
 
         unregisterManagers()
@@ -149,8 +134,8 @@ class MainActivity : USBActivity() {
         mCard.lock = prefs.getBoolean("LOCK", false)
         mCard.autoIncrement = prefs.getBoolean("AUTO_INCREMENT", false)
         mCard.autoDecrement = prefs.getBoolean("AUTO_DECREMENT", false)
-        mCard.customerId = prefs.getInt("CUSTOMER_ID", 0u.toInt()).toUByte()
-        mCard.userId = prefs.getInt("USER_ID", 0u.toInt()).toUInt()
+        mCard.idCard.customerId = prefs.getInt("CUSTOMER_ID", 0u.toInt()).toUByte()
+        mCard.idCard.wiegand34 = prefs.getInt("USER_ID", 0u.toInt()).toUInt()
 
         checkForCrashes()
     }
@@ -168,9 +153,21 @@ class MainActivity : USBActivity() {
         mCard.connected = connected
     }
 
-    private fun checkForCrashes() = CrashManager.register(this)
+    private fun checkForCrashes() {
+        if (!BuildConfig.DEBUG) {
+            CrashManager.register(this)
+        }
+    }
 
-    private fun checkForUpdates() = UpdateManager.register(this)
+    private fun checkForUpdates() {
+        if (!BuildConfig.DEBUG) {
+            UpdateManager.register(this)
+        }
+    }
 
-    private fun unregisterManagers() = UpdateManager.unregister()
+    private fun unregisterManagers() {
+        if (!BuildConfig.DEBUG) {
+            UpdateManager.unregister()
+        }
+    }
 }

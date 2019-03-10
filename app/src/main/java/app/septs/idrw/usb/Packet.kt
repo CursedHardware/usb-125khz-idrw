@@ -15,9 +15,9 @@ fun wrapPacket(packet: ByteArray, command: Command): ByteArray {
 }
 
 fun unwrapPacket(packet: ByteArray) = packet
-        .sliceArray(packet.indexOf(STX) + 1 until packet.lastIndexOf(ETX))
+    .sliceArray(packet.indexOf(STX) + 1 until packet.lastIndexOf(ETX))
 
 @ExperimentalUnsignedTypes
 fun toHexString(packet: ByteArray) = packet
-        .joinToString(" ") { it.toUByte().toString(16).padStart(2, '0') }
-        .toUpperCase()
+    .joinToString(" ") { it.toUByte().toString(16).padStart(2, '0') }
+    .toUpperCase()

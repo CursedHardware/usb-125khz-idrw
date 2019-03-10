@@ -1,211 +1,171 @@
 <?xml version="1.0" encoding="utf-8"?>
 <layout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools">
-
+        xmlns:tools="http://schemas.android.com/tools">
     <data>
-
-        <import type="app.septs.idrw.usb.CardType" />
-
-        <variable
-            name="vm"
-            type="app.septs.idrw.CardViewModel" />
+        <import type="app.septs.idrw.usb.CardType"/>
+        <variable name="vm" type="app.septs.idrw.CardViewModel"/>
     </data>
 
-    <ScrollView
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:fillViewport="true"
-        tools:ignore="ScrollViewCount,UselessParent">
-
-        <LinearLayout
-            android:id="@+id/container"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:focusable="true"
-            android:focusableInTouchMode="true"
-            android:orientation="vertical"
-            android:padding="16dp"
-            tools:context=".MainActivity"
-            tools:ignore="Autofill,HardcodedText,LabelFor">
-
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="horizontal">
-
-                <TextView
-                    android:layout_width="80dp"
-                    android:layout_height="match_parent"
-                    android:gravity="center_vertical|end"
-                    android:text="@string/label_type" />
-
-                <RadioGroup
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:orientation="horizontal">
-
+    <ScrollView android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:fillViewport="true"
+                tools:ignore="ScrollViewCount,UselessParent">
+        <LinearLayout android:id="@+id/container"
+                      android:layout_width="match_parent"
+                      android:layout_height="wrap_content"
+                      android:focusable="true"
+                      android:focusableInTouchMode="true"
+                      android:orientation="vertical"
+                      android:padding="16dp"
+                      tools:context=".MainActivity"
+                      tools:ignore="Autofill,HardcodedText,LabelFor">
+            <LinearLayout android:layout_width="match_parent"
+                          android:layout_height="wrap_content"
+                          android:orientation="horizontal">
+                <TextView android:layout_width="80dp"
+                          android:layout_height="match_parent"
+                          android:gravity="center_vertical|end"
+                          android:text="@string/label_type"/>
+                <RadioGroup android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:orientation="horizontal">
                     <RadioButton
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:checked="@{vm.type == CardType.T5577}"
-                        android:enabled="@{vm.available}"
-                        android:onClick="@{() -> vm.setType(CardType.T5577)}"
-                        android:text="T5577" />
-
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:checked="@{vm.type == CardType.T5577}"
+                            android:enabled="@{vm.available}"
+                            android:onClick="@{() -> vm.setType(CardType.T5577)}"
+                            android:text="T5577"/>
                     <RadioButton
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:checked="@{vm.type == CardType.EM4305}"
-                        android:enabled="@{vm.available}"
-                        android:onClick="@{() -> vm.setType(CardType.EM4305)}"
-                        android:text="EM4305" />
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:checked="@{vm.type == CardType.EM4305}"
+                            android:enabled="@{vm.available}"
+                            android:onClick="@{() -> vm.setType(CardType.EM4305)}"
+                            android:text="EM4305"/>
                 </RadioGroup>
             </LinearLayout>
-
             <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="horizontal">
-
-                <TextView
-                    android:layout_width="80dp"
-                    android:layout_height="match_parent"
-                    android:gravity="center_vertical|end"
-                    android:text="@string/label_flags" />
-
-                <CheckBox
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:checked="@={vm.lock}"
-                    android:enabled="@{vm.available}"
-                    android:text="@string/flag_write_protected" />
-
-                <CheckBox
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:checked="@={vm.autoIncrement}"
-                    android:enabled="@{vm.available}"
-                    android:text="@string/flag_auto_increment" />
-
-                <CheckBox
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:checked="@={vm.autoDecrement}"
-                    android:enabled="@{vm.available}"
-                    android:text="@string/flag_auto_decrement" />
-
-            </LinearLayout>
-
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="horizontal">
-
-                <TextView
-                    android:layout_width="80dp"
-                    android:layout_height="match_parent"
-                    android:layout_marginTop="10dp"
-                    android:gravity="center_vertical|end"
-                    android:text="@string/label_customer_id" />
-
-                <android.support.design.widget.TextInputLayout
                     android:layout_width="match_parent"
-                    android:layout_height="match_parent">
-
-                    <EditText
-                        android:id="@+id/customerId"
-                        android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal">
+                <TextView
+                        android:layout_width="80dp"
                         android:layout_height="match_parent"
+                        android:gravity="center_vertical|end"
+                        android:text="@string/label_flags"/>
+                <CheckBox
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:checked="@={vm.lock}"
                         android:enabled="@{vm.available}"
-                        android:hint="0 - 255"
-                        android:inputType="number"
-                        android:text="@={vm.customerIdAsString}" />
-                </android.support.design.widget.TextInputLayout>
-
+                        android:text="@string/flag_write_protected"/>
+                <CheckBox
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:checked="@={vm.autoIncrement}"
+                        android:enabled="@{vm.available}"
+                        android:text="@string/flag_auto_increment"/>
+                <CheckBox
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:checked="@={vm.autoDecrement}"
+                        android:enabled="@{vm.available}"
+                        android:text="@string/flag_auto_decrement"/>
             </LinearLayout>
-
             <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="horizontal">
-
-                <TextView
-                    android:layout_width="80dp"
-                    android:layout_height="match_parent"
-                    android:layout_marginTop="10dp"
-                    android:gravity="center_vertical|end"
-                    android:text="@string/label_wiegand_34" />
-
-                <android.support.design.widget.TextInputLayout
                     android:layout_width="match_parent"
-                    android:layout_height="match_parent">
-
-                    <EditText
-                        android:id="@+id/wiegand34"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal">
+                <TextView
+                        android:layout_width="80dp"
+                        android:layout_height="match_parent"
+                        android:layout_marginTop="10dp"
+                        android:gravity="center_vertical|end"
+                        android:text="@string/label_customer_id"/>
+                <android.support.design.widget.TextInputLayout
                         android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:enabled="@{vm.available}"
-                        android:hint="0 - 4294967295"
-                        android:inputType="number"
-                        android:text="@={vm.userIdAsWG34}" />
+                        android:layout_height="match_parent">
+                    <EditText
+                            android:id="@+id/customerId"
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:enabled="@{vm.available}"
+                            android:hint="0 - 255"
+                            android:inputType="number"
+                            android:text="@={vm.customerIdAsString}"/>
                 </android.support.design.widget.TextInputLayout>
             </LinearLayout>
-
             <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="horizontal">
-
-                <TextView
-                    android:layout_width="80dp"
-                    android:layout_height="match_parent"
-                    android:layout_marginTop="10dp"
-                    android:gravity="center_vertical|end"
-                    android:text="@string/label_wiegand_26" />
-
-                <android.support.design.widget.TextInputLayout
-                    android:layout_width="100dp"
-                    android:layout_height="match_parent">
-
-                    <EditText
-                        android:id="@+id/wiegand26FacilityCode"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:enabled="@{vm.available}"
-                        android:hint="0 - 255"
-                        android:inputType="numberDecimal"
-                        android:text="@={vm.userIdAsWG26FacilityCode}" />
-
-                </android.support.design.widget.TextInputLayout>
-
-                <android.support.design.widget.TextInputLayout
                     android:layout_width="match_parent"
-                    android:layout_height="match_parent">
-
-                    <EditText
-                        android:id="@+id/wiegand26IDCode"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal">
+                <TextView
+                        android:layout_width="80dp"
+                        android:layout_height="match_parent"
+                        android:layout_marginTop="10dp"
+                        android:gravity="center_vertical|end"
+                        android:text="@string/label_wiegand_34"/>
+                <android.support.design.widget.TextInputLayout
                         android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:enabled="@{vm.available}"
-                        android:hint="0 - 65535"
-                        android:inputType="number"
-                        android:text="@={vm.userIdAsWG26IDCode}" />
+                        android:layout_height="match_parent">
+                    <EditText
+                            android:id="@+id/wiegand34"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:enabled="@{vm.available}"
+                            android:hint="0 - 4294967295"
+                            android:inputType="number"
+                            android:text="@={vm.userIdAsWG34}"/>
                 </android.support.design.widget.TextInputLayout>
             </LinearLayout>
-
+            <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal">
+                <TextView
+                        android:layout_width="80dp"
+                        android:layout_height="match_parent"
+                        android:layout_marginTop="10dp"
+                        android:gravity="center_vertical|end"
+                        android:text="@string/label_wiegand_26"/>
+                <android.support.design.widget.TextInputLayout
+                        android:layout_width="100dp"
+                        android:layout_height="match_parent">
+                    <EditText
+                            android:id="@+id/wiegand26FacilityCode"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:enabled="@{vm.available}"
+                            android:hint="0 - 255"
+                            android:inputType="numberDecimal"
+                            android:text="@={vm.userIdAsWG26FacilityCode}"/>
+                </android.support.design.widget.TextInputLayout>
+                <android.support.design.widget.TextInputLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent">
+                    <EditText
+                            android:id="@+id/wiegand26IDCode"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:enabled="@{vm.available}"
+                            android:hint="0 - 65535"
+                            android:inputType="number"
+                            android:text="@={vm.userIdAsWG26IDCode}"/>
+                </android.support.design.widget.TextInputLayout>
+            </LinearLayout>
             <Button
-                android:id="@+id/readCard"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:enabled="@{vm.available}"
-                android:text="@string/btn_card_read" />
-
+                    android:id="@+id/readCard"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:enabled="@{vm.available}"
+                    android:text="@string/btn_card_read"/>
             <Button
-                android:id="@+id/writeCard"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:enabled="@{vm.available}"
-                android:text="@string/btn_card_write" />
+                    android:id="@+id/writeCard"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:enabled="@{vm.available}"
+                    android:text="@string/btn_card_write"/>
         </LinearLayout>
     </ScrollView>
 </layout>

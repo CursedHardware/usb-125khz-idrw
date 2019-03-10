@@ -3,7 +3,7 @@ package app.septs.idrw
 import android.databinding.BaseObservable
 import android.databinding.Bindable
 import app.septs.idrw.usb.CardType
-import java.nio.ByteBuffer
+import app.septs.idrw.usb.IDCard
 
 
 @ExperimentalUnsignedTypes
@@ -40,33 +40,28 @@ class CardViewModel : BaseObservable() {
             notifyPropertyChanged(BR.autoDecrement)
         }
 
-    var customerId: UByte = 0u
+    var idCard = IDCard()
         set(value) {
             field = value
             notifyPropertyChanged(BR.customerIdAsString)
-        }
-
-    var customerIdAsString: String
-        @Bindable
-        get() = customerId.toString()
-        set(value) {
-            customerId = value.toUByteOrNull() ?: 0u
-            notifyPropertyChanged(BR.customerIdAsString)
-        }
-
-    var userId: UInt = 0u
-        set(value) {
-            field = value
             notifyPropertyChanged(BR.userIdAsWG34)
             notifyPropertyChanged(BR.userIdAsWG26FacilityCode)
             notifyPropertyChanged(BR.userIdAsWG26IDCode)
         }
 
+    var customerIdAsString: String
+        @Bindable
+        get() = idCard.customerId.toString()
+        set(value) {
+            idCard.customerId = value.toUByteOrNull() ?: 0u
+            notifyPropertyChanged(BR.customerIdAsString)
+        }
+
     var userIdAsWG34: String
         @Bindable
-        get() = userId.toString()
+        get() = idCard.wiegand34.toString()
         set(value) {
-            userId = value.toUIntOrNull() ?: 0u
+            idCard.wiegand34 = value.toUIntOrNull() ?: 0u
             notifyPropertyChanged(BR.userIdAsWG34)
             notifyPropertyChanged(BR.userIdAsWG26FacilityCode)
             notifyPropertyChanged(BR.userIdAsWG26IDCode)
@@ -74,40 +69,22 @@ class CardViewModel : BaseObservable() {
 
     var userIdAsWG26FacilityCode: String
         @Bindable
-        get() = ByteBuffer.allocate(4).let {
-            it.putInt(userId.toInt())
-            return@let it.get(1).toUByte().toString()
-        }
+        get() = idCard.wiegand26FacilityCode.toString()
         set(value) {
-            ByteBuffer.allocate(4).let {
-                val code = value.toUByteOrNull() ?: 0u
-                it.putInt(userId.toInt())
-                it.put(1, code.toByte())
-                userId = it.getInt(0).toUInt()
-
-                notifyPropertyChanged(BR.userIdAsWG34)
-                notifyPropertyChanged(BR.userIdAsWG26FacilityCode)
-                notifyPropertyChanged(BR.userIdAsWG26IDCode)
-            }
+            idCard.wiegand26FacilityCode = value.toUByteOrNull() ?: 0u
+            notifyPropertyChanged(BR.userIdAsWG34)
+            notifyPropertyChanged(BR.userIdAsWG26FacilityCode)
+            notifyPropertyChanged(BR.userIdAsWG26IDCode)
         }
 
     var userIdAsWG26IDCode: String
         @Bindable
-        get() = ByteBuffer.allocate(4).let {
-            it.putInt(userId.toInt())
-            return@let it.getShort(2).toUShort().toString()
-        }
+        get() = idCard.wiegand26IDCode.toString()
         set(value) {
-            ByteBuffer.allocate(4).let {
-                val code = value.toUShortOrNull() ?: 0u
-                it.putInt(userId.toInt())
-                it.putShort(2, code.toShort())
-                userId = it.getInt(0).toUInt()
-
-                notifyPropertyChanged(BR.userIdAsWG34)
-                notifyPropertyChanged(BR.userIdAsWG26FacilityCode)
-                notifyPropertyChanged(BR.userIdAsWG26IDCode)
-            }
+            idCard.wiegand26IDCode = value.toUShortOrNull() ?: 0u
+            notifyPropertyChanged(BR.userIdAsWG34)
+            notifyPropertyChanged(BR.userIdAsWG26FacilityCode)
+            notifyPropertyChanged(BR.userIdAsWG26IDCode)
         }
 }
 

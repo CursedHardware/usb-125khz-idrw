@@ -15,21 +15,19 @@ import app.septs.idrw.usb.USBBackend
 @kotlin.ExperimentalUnsignedTypes
 abstract class USBActivity : AppCompatActivity() {
     private lateinit var mUSBManager: UsbManager
-    private lateinit var mUSBPermission: String
+    private var mUSBPermission = "${BuildConfig.APPLICATION_ID}.USB_PERMISSION"
     private lateinit var mUSBPermissionIntent: PendingIntent
-    private lateinit var mUSBReceiverIntent: IntentFilter
+    private var mUSBReceiverIntent = IntentFilter().apply {
+        addAction(mUSBPermission)
+        addAction(UsbManager.ACTION_USB_DEVICE_ATTACHED)
+        addAction(UsbManager.ACTION_USB_DEVICE_DETACHED)
+    }
     protected var mBackend: USBBackend? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         mUSBManager = getSystemService(Context.USB_SERVICE) as UsbManager
-        mUSBPermission = "${applicationContext.packageName}.USB_PERMISSION"
         mUSBPermissionIntent = PendingIntent.getBroadcast(this, 0, Intent(mUSBPermission), 0)
-        mUSBReceiverIntent = IntentFilter().apply {
-            addAction(mUSBPermission)
-            addAction(UsbManager.ACTION_USB_DEVICE_ATTACHED)
-            addAction(UsbManager.ACTION_USB_DEVICE_DETACHED)
-        }
 
         registerReceiver(mUSBReceiver, mUSBReceiverIntent)
         connectBackend()
@@ -87,8 +85,8 @@ abstract class USBActivity : AppCompatActivity() {
     private fun connectBackend(newDevice: UsbDevice? = null) {
         mBackend?.close()
         val device = newDevice
-                ?: intent.getParcelableExtra(UsbManager.EXTRA_DEVICE)
-                ?: mUSBManager.deviceList?.values?.find(USBBackend.Companion::isSupported)
+            ?: intent.getParcelableExtra(UsbManager.EXTRA_DEVICE)
+            ?: mUSBManager.deviceList?.values?.find(USBBackend.Companion::isSupported)
         if (device == null) {
             setConnected(false)
             Toast.makeText(this, R.string.toast_device_not_found, Toast.LENGTH_LONG).show()

@@ -9,7 +9,7 @@ android {
         applicationId "app.septs.idrw"
         minSdkVersion 15
         targetSdkVersion 28
-        versionCode 3
+        versionCode 4
         versionName "1.2"
     }
     buildTypes {

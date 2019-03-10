@@ -7,25 +7,17 @@ class ResponsePacket(packet: ByteArray) {
     val payload: ByteArray
 
     init {
-        // payload data structure
-        // 0: station id (1 byte)
-        // 1: response length (status + payload)
-        // 2: response status (1 byte)
-        // 3: response payload (3 ... (3 + (n - 1)))
-        val unwrapped = unwrapPacket(packet)
-        this.stationId = unwrapped[0]
-        val length = unwrapped[1] - 1
-        this.status = unwrapped[2]
-        this.payload = unwrapped.sliceArray(3 until 3 + length)
-    }
-
-    fun throwException() {
+        if (packet.all { it == 0.toByte() }) {
+            throw CardException(0x82.toByte())
+        }
+        unwrapPacket(packet).also {
+            stationId = it[0] // station id
+            val length = it[1] - 1 // response length (status + payload)
+            status = it[2] // response status (1 byte)
+            payload = it.sliceArray(3 until 3 + length) // response payload
+        }
         if (status == 0x01.toByte()) {
             throw CardException(payload[0])
         }
-    }
-
-    override fun toString(): String {
-        return "${toHexString(payload)} (Status: $status, Station ID: $stationId)"
     }
 }

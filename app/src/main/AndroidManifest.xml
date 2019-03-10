@@ -1,42 +1,40 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
-    package="app.septs.idrw">
+          xmlns:tools="http://schemas.android.com/tools"
+          package="app.septs.idrw">
 
-    <uses-feature android:name="android.hardware.usb.host" />
-    <uses-permission android:name="android.permission.INTERNET" />
-    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
-    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+    <uses-feature android:name="android.hardware.usb.host"/>
+    <uses-permission android:name="android.permission.INTERNET"/>
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE"/>
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>
 
-    <application
-        android:icon="@mipmap/ic_launcher"
-        android:label="@string/app_name"
-        android:roundIcon="@mipmap/ic_launcher_round"
-        android:supportsRtl="true"
-        android:theme="@style/AppTheme"
-        tools:ignore="AllowBackup,GoogleAppIndexingWarning">
-        <activity
-            android:name=".MainActivity"
-            android:launchMode="singleTask">
+    <application android:icon="@mipmap/ic_launcher"
+                 android:label="@string/app_name"
+                 android:roundIcon="@mipmap/ic_launcher_round"
+                 android:supportsRtl="true"
+                 android:theme="@style/AppTheme"
+                 android:allowBackup="true"
+                 android:fullBackupContent="true"
+                 tools:ignore="GoogleAppIndexingWarning">
+        <activity android:name=".MainActivity" android:launchMode="singleTask">
             <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
-
-                <category android:name="android.intent.category.LAUNCHER" />
+                <action android:name="android.intent.action.MAIN"/>
+                <category android:name="android.intent.category.LAUNCHER"/>
             </intent-filter>
 
             <intent-filter>
-                <action android:name="android.hardware.usb.action.USB_DEVICE_ATTACHED" />
-                <action android:name="android.hardware.usb.action.USB_DEVICE_DETACHED" />
+                <action android:name="android.hardware.usb.action.USB_DEVICE_ATTACHED"/>
+                <action android:name="android.hardware.usb.action.USB_DEVICE_DETACHED"/>
             </intent-filter>
 
             <meta-data
-                android:name="android.hardware.usb.action.USB_DEVICE_ATTACHED"
-                android:resource="@xml/device_filter" />
+                    android:name="android.hardware.usb.action.USB_DEVICE_ATTACHED"
+                    android:resource="@xml/device_filter"/>
         </activity>
 
         <meta-data
-            android:name="net.hockeyapp.android.appIdentifier"
-            android:value="${HOCKEYAPP_APP_ID}" />
+                android:name="net.hockeyapp.android.appIdentifier"
+                android:value="${HOCKEYAPP_APP_ID}"/>
     </application>
 
 </manifest>

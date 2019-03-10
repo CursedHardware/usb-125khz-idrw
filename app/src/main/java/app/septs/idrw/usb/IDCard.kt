@@ -3,40 +3,46 @@ package app.septs.idrw.usb
 import java.nio.ByteBuffer
 
 @ExperimentalUnsignedTypes
-data class IDCard(var card: ByteArray = ByteArray(0x05)) {
+class IDCard(private val card: ByteBuffer = ByteBuffer.allocate(0x05)) {
+    constructor(card: ByteArray) : this(ByteBuffer.wrap(card))
+
     var customerId: UByte
-        get() = card[0].toUByte()
+        get() = card.get(0).toUByte()
         set(value) {
-            card[0] = value.toByte()
+            card.put(0, value.toByte())
         }
 
-    var userId: UInt
-        get() = ByteBuffer.wrap(card).getInt(1).toUInt()
+    var wiegand34: UInt
+        get() = card.getInt(1).toUInt()
         set(value) {
-            ByteBuffer.wrap(card).apply {
-                putInt(1, value.toInt())
-                card = array()
-            }
+            card.putInt(1, value.toInt())
         }
 
-    override fun toString(): String {
-        val cid = "$customerId".padStart(3, '0')
-        val uid = "$userId".padStart(10, '0')
-        return "CID: $cid, UID: $uid"
+    var wiegand26FacilityCode: UByte
+        get() = card.get(2).toUByte()
+        set(value) {
+            card.put(2, value.toByte())
+        }
+
+    var wiegand26IDCode: UShort
+        get() = card.getShort(3).toUShort()
+        set(value) {
+            card.putShort(3, value.toShort())
+        }
+
+    operator fun plusAssign(value: UInt) {
+        wiegand34 += value
     }
 
-    override fun equals(other: Any?): Boolean {
-        if (this === other) return true
-        if (javaClass != other?.javaClass) return false
-
-        other as IDCard
-
-        if (!card.contentEquals(other.card)) return false
-
-        return true
+    operator fun minusAssign(value: UInt) {
+        wiegand34 -= value
     }
 
-    override fun hashCode(): Int {
-        return card.contentHashCode()
-    }
+    fun toPacket(): ByteArray = card.array()
+
+    override fun toString() = "CID: %03d, UID: %010d".format(customerId.toInt(), wiegand34.toInt())
+
+    override fun equals(other: Any?) = other is IDCard && card == other.card
+
+    override fun hashCode() = card.hashCode()
 }
