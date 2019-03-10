@@ -22,18 +22,16 @@ class CardViewModel : BaseObservable() {
 
     var lock = false
 
+    @get:Bindable
     var autoIncrement = false
-        @Bindable
-        get() = field
         set(value) {
             field = value
             if (autoDecrement && value) autoDecrement = false
             notifyPropertyChanged(BR.autoIncrement)
         }
 
+    @get:Bindable
     var autoDecrement = false
-        @Bindable
-        get() = field
         set(value) {
             field = value
             if (autoIncrement && value) autoIncrement = false
@@ -87,4 +85,5 @@ class CardViewModel : BaseObservable() {
             notifyPropertyChanged(BR.userIdAsWG26IDCode)
         }
 }
+
 
