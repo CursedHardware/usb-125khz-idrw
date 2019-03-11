@@ -3,7 +3,7 @@ package app.septs.idrw.usb
 import java.nio.ByteBuffer
 
 @ExperimentalUnsignedTypes
-class IDCard(private val card: ByteBuffer = ByteBuffer.allocate(0x05)) {
+class IDCard(private val card: ByteBuffer = ByteBuffer.allocate(5)) {
     constructor(card: ByteArray) : this(ByteBuffer.wrap(card))
 
     var customerId: UByte
@@ -30,17 +30,41 @@ class IDCard(private val card: ByteBuffer = ByteBuffer.allocate(0x05)) {
             card.putShort(3, value.toShort())
         }
 
-    operator fun plusAssign(value: UInt) {
-        wiegand34 += value
+    operator fun plus(value: UInt) = IDCard(card.duplicate()).apply {
+        when {
+            wiegand34 == UInt.MAX_VALUE -> {
+                customerId++
+                wiegand34 = 1u
+            }
+            customerId == UByte.MAX_VALUE && wiegand34 == UInt.MAX_VALUE -> {
+                customerId = UByte.MIN_VALUE
+                wiegand34 = 1u
+            }
+            else -> {
+                wiegand34 += value
+            }
+        }
     }
 
-    operator fun minusAssign(value: UInt) {
-        wiegand34 -= value
+    operator fun minus(value: UInt) = IDCard(card.duplicate()).apply {
+        when {
+            wiegand34 == UInt.MIN_VALUE || wiegand34 == 1u -> {
+                customerId--
+                wiegand34 = UInt.MAX_VALUE
+            }
+            customerId == UByte.MIN_VALUE && wiegand34 == 1u -> {
+                customerId = UByte.MAX_VALUE
+                wiegand34 = UInt.MAX_VALUE
+            }
+            else -> {
+                wiegand34 -= value
+            }
+        }
     }
 
     fun toPacket(): ByteArray = card.array()
 
-    override fun toString() = "CID: %03d, UID: %010d".format(customerId.toInt(), wiegand34.toInt())
+    override fun toString() = "CID: %3s, UID: %10s".format(customerId, wiegand34)
 
     override fun equals(other: Any?) = other is IDCard && card == other.card
 

@@ -7,6 +7,7 @@ import android.content.pm.ActivityInfo
 import android.databinding.DataBindingUtil
 import android.net.Uri
 import android.os.Bundle
+import android.os.Looper
 import android.provider.Settings
 import android.view.Menu
 import android.view.MenuItem
@@ -19,6 +20,7 @@ import app.septs.idrw.usb.CardType
 import app.septs.idrw.usb.IDCard
 import net.hockeyapp.android.CrashManager
 import net.hockeyapp.android.UpdateManager
+import kotlin.concurrent.thread
 
 
 @ExperimentalUnsignedTypes
@@ -28,22 +30,32 @@ class MainActivity : USBActivity() {
     }
 
     private var mCard = CardViewModel()
-    private lateinit var mBinding: ActivityMainBinding
+    private val mBinding by lazy {
+        DataBindingUtil.setContentView<ActivityMainBinding>(this@MainActivity, R.layout.activity_main)
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
-        mBinding = DataBindingUtil.setContentView(this, R.layout.activity_main)
-        mBinding.apply {
-            vm = mCard
-
-            customerId.filters += InputFilterValueRange(0x00L..0xFFL)
-            wiegand34.filters += InputFilterValueRange(0x00000000..0xFFFFFFFF)
-            wiegand26FacilityCode.filters += InputFilterValueRange(0x00L..0xFFL)
-            wiegand26IDCode.filters += InputFilterValueRange(0x0000L..0xFFFFL)
-            readCard.setOnClickListener { onReadCard() }
-            writeCard.setOnClickListener { onWriteCard() }
+        mBinding.vm = mCard
+        mBinding.customerId.filters += InputFilterValueRange(0x00L..0xFFL)
+        mBinding.wiegand34.filters += InputFilterValueRange(0x00000000..0xFFFFFFFF)
+        mBinding.wiegand26FacilityCode.filters += InputFilterValueRange(0x00L..0xFFL)
+        mBinding.wiegand26IDCode.filters += InputFilterValueRange(0x0000L..0xFFFFL)
+        mBinding.readCard.setOnClickListener {
+            thread {
+                Looper.prepare()
+                onReadCard()
+                Looper.loop()
+            }
+        }
+        mBinding.writeCard.setOnClickListener {
+            thread {
+                Looper.prepare()
+                onWriteCard()
+                Looper.loop()
+            }
         }
 
         checkForUpdates()
@@ -70,7 +82,6 @@ class MainActivity : USBActivity() {
                     mCard.autoIncrement -> mCard.idCard += 1u
                     mCard.autoDecrement -> mCard.idCard -= 1u
                 }
-                mCard.notifyChange()
                 getString(R.string.toast_write_card_success, mCard.idCard)
             } else {
                 getString(R.string.toast_write_card_failed)
