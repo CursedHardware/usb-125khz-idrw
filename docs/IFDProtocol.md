@@ -72,14 +72,14 @@ Definition
 +-------------+--------------------------+--------------------------+
 |    Field    |        Definition        |           Note           |
 +-------------+--------------------------+--------------------------+
-| STX         | 0x02                     | Start TX                 |
-| ETX         | 0x03                     | End TX                   |
+| STX         | 0x02                     | Start Transmitted        |
+| ETX         | 0x03                     | End Transmitted          |
 | STATION-ID  | Device ID                | 0x00 in Standalone mode  |
 | DATA-LENGTH | DATA with COMMAND/STATUS |                          |
 | DATA        | Payload                  | Max payload is 255 bytes |
 | COMMAND     | Sent command word        |                          |
 | STATUS      | Returns status word      |                          |
-| BCC         | CRC8 without STX and ETX |                          |
+| BCC         | XOR without STX and ETX  |                          |
 +-------------+--------------------------+--------------------------+
 STATION-ID:
     The device address must be in the multi-machine communication.
