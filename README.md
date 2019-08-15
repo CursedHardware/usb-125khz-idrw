@@ -2,7 +2,7 @@
 
 [![Build status](https://build.appcenter.ms/v0.1/apps/f8568200-2d7d-4d5e-af66-c116f374c886/branches/master/badge)](https://appcenter.ms)
 
-IDRW stands for ID Read and Write, and this is an app that works on Android 4.0+
+IDRW stands for ID Read and Write, and this is an app that works on Android 4.1+
 
 An app used for USB-HID 125kHz ID reader.
 
