@@ -31,10 +31,6 @@
                     android:name="android.hardware.usb.action.USB_DEVICE_ATTACHED"
                     android:resource="@xml/device_filter"/>
         </activity>
-
-        <meta-data
-                android:name="net.hockeyapp.android.appIdentifier"
-                android:value="${HOCKEYAPP_APP_ID}"/>
     </application>
 
 </manifest>

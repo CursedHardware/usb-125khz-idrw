@@ -18,8 +18,9 @@ import app.septs.idrw.tools.Keyboard
 import app.septs.idrw.usb.CardException
 import app.septs.idrw.usb.CardType
 import app.septs.idrw.usb.IDCard
-import net.hockeyapp.android.CrashManager
-import net.hockeyapp.android.UpdateManager
+import com.microsoft.appcenter.AppCenter;
+import com.microsoft.appcenter.analytics.Analytics;
+import com.microsoft.appcenter.crashes.Crashes;
 import kotlin.concurrent.thread
 
 
@@ -58,7 +59,14 @@ class MainActivity : USBActivity() {
             }
         }
 
-        checkForUpdates()
+        if (!BuildConfig.DEBUG) {
+            AppCenter.start(
+                application,
+                "84e74391-7043-45e8-a0a8-217ab98e0a5c",
+                Analytics::class.java,
+                Crashes::class.java
+            )
+        }
     }
 
     private fun onReadCard() {
@@ -134,8 +142,6 @@ class MainActivity : USBActivity() {
         editor.putInt("CUSTOMER_ID", mCard.idCard.customerId.toInt())
         editor.putInt("USER_ID", mCard.idCard.wiegand34.toInt())
         editor.apply()
-
-        unregisterManagers()
     }
 
     override fun onResume() {
@@ -147,14 +153,6 @@ class MainActivity : USBActivity() {
         mCard.autoDecrement = prefs.getBoolean("AUTO_DECREMENT", false)
         mCard.idCard.customerId = prefs.getInt("CUSTOMER_ID", 0u.toInt()).toUByte()
         mCard.idCard.wiegand34 = prefs.getInt("USER_ID", 0u.toInt()).toUInt()
-
-        checkForCrashes()
-    }
-
-    override fun onDestroy() {
-        super.onDestroy()
-
-        unregisterManagers()
     }
 
     override fun setConnected(connected: Boolean) {
@@ -162,23 +160,5 @@ class MainActivity : USBActivity() {
             Keyboard.hidden(this)
         }
         mCard.connected = connected
-    }
-
-    private fun checkForCrashes() {
-        if (!BuildConfig.DEBUG) {
-            CrashManager.register(this)
-        }
-    }
-
-    private fun checkForUpdates() {
-        if (!BuildConfig.DEBUG) {
-            UpdateManager.register(this)
-        }
-    }
-
-    private fun unregisterManagers() {
-        if (!BuildConfig.DEBUG) {
-            UpdateManager.unregister()
-        }
     }
 }
