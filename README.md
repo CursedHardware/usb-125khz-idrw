@@ -10,7 +10,7 @@ This application will not be published to the Application Store (Play Store, etc
 
 Therefore here is the only source to get this app.
 
-<https://install.appcenter.ms/orgs/NiceLabs/apps/IDRW>
+<https://install.appcenter.ms/orgs/NiceLabs/apps/IDRW/distribution_groups/Release>
 
 ## Recommended Hardware
 
