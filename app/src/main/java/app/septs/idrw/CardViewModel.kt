@@ -1,7 +1,7 @@
 package app.septs.idrw
 
-import android.databinding.BaseObservable
-import android.databinding.Bindable
+import androidx.databinding.BaseObservable
+import androidx.databinding.Bindable
 import app.septs.idrw.usb.CardType
 import app.septs.idrw.usb.IDCard
 

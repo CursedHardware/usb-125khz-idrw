@@ -43,7 +43,9 @@ class USBBackend(
     fun writeCard(type: CardType, card: IDCard, lock: Boolean) {
         sendPacket(makeLock(type, false))
         sendPacket(makeWrite(type, card))
-        sendPacket(makeLock(type, lock))
+        if (lock) {
+            sendPacket(makeLock(type, lock))
+        }
         sendPacket(makeControlBuzzer())
     }
 
@@ -57,8 +59,8 @@ class USBBackend(
         connection.controlTransfer(type, request, value, 0, payload, payload.size, TIMEOUT)
         if (BuildConfig.DEBUG) {
             when (type) {
-                CONTROL_OUT -> Log.d(TAG, ">>> ${toHexString(payload)}")
-                CONTROL_IN -> Log.d(TAG, "<<< ${toHexString(payload)}")
+                CONTROL_OUT -> Log.d(TAG, ">>> ${Packet.toHexString(payload)}")
+                CONTROL_IN -> Log.d(TAG, "<<< ${Packet.toHexString(payload)}")
             }
         }
         return payload

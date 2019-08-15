@@ -37,6 +37,6 @@ class RequestPacket(
         packet += command.code
         packet += payload
         packet += packet.reduce(Byte::xor) // checksum (crc8)
-        return wrapPacket(packet, command)
+        return Packet.wrap(packet, command)
     }
 }

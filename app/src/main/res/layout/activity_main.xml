@@ -83,7 +83,7 @@
                         android:layout_marginTop="10dp"
                         android:gravity="center_vertical|end"
                         android:text="@string/label_customer_id"/>
-                <android.support.design.widget.TextInputLayout
+                <com.google.android.material.textfield.TextInputLayout
                         android:layout_width="match_parent"
                         android:layout_height="match_parent">
                     <EditText
@@ -94,7 +94,7 @@
                             android:hint="0 - 255"
                             android:inputType="number"
                             android:text="@={vm.customerIdAsString}"/>
-                </android.support.design.widget.TextInputLayout>
+                </com.google.android.material.textfield.TextInputLayout>
             </LinearLayout>
             <LinearLayout
                     android:layout_width="match_parent"
@@ -106,7 +106,7 @@
                         android:layout_marginTop="10dp"
                         android:gravity="center_vertical|end"
                         android:text="@string/label_wiegand_34"/>
-                <android.support.design.widget.TextInputLayout
+                <com.google.android.material.textfield.TextInputLayout
                         android:layout_width="match_parent"
                         android:layout_height="match_parent">
                     <EditText
@@ -117,7 +117,7 @@
                             android:hint="0 - 4294967295"
                             android:inputType="number"
                             android:text="@={vm.userIdAsWG34}"/>
-                </android.support.design.widget.TextInputLayout>
+                </com.google.android.material.textfield.TextInputLayout>
             </LinearLayout>
             <LinearLayout
                     android:layout_width="match_parent"
@@ -129,7 +129,7 @@
                         android:layout_marginTop="10dp"
                         android:gravity="center_vertical|end"
                         android:text="@string/label_wiegand_26"/>
-                <android.support.design.widget.TextInputLayout
+                <com.google.android.material.textfield.TextInputLayout
                         android:layout_width="100dp"
                         android:layout_height="match_parent">
                     <EditText
@@ -140,8 +140,8 @@
                             android:hint="0 - 255"
                             android:inputType="numberDecimal"
                             android:text="@={vm.userIdAsWG26FacilityCode}"/>
-                </android.support.design.widget.TextInputLayout>
-                <android.support.design.widget.TextInputLayout
+                </com.google.android.material.textfield.TextInputLayout>
+                <com.google.android.material.textfield.TextInputLayout
                         android:layout_width="match_parent"
                         android:layout_height="match_parent">
                     <EditText
@@ -152,7 +152,7 @@
                             android:hint="0 - 65535"
                             android:inputType="number"
                             android:text="@={vm.userIdAsWG26IDCode}"/>
-                </android.support.design.widget.TextInputLayout>
+                </com.google.android.material.textfield.TextInputLayout>
             </LinearLayout>
             <Button
                     android:id="@+id/readCard"

@@ -10,7 +10,7 @@ class ResponsePacket(packet: ByteArray) {
         if (packet.all { it == 0.toByte() }) {
             throw CardException(0x82.toByte())
         }
-        unwrapPacket(packet).also {
+        Packet.unwrap(packet).also {
             stationId = it[0] // station id
             val length = it[1] - 1 // response length (status + payload)
             status = it[2] // response status (1 byte)
