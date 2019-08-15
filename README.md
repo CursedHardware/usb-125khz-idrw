@@ -8,7 +8,7 @@ This application will not be published to the Application Store (Play Store, etc
 
 Therefore here is the only source to get this app.
 
-<https://rink.hockeyapp.net/apps/f46f81f8a00b4260afa2a12ca0fba153>
+<https://install.appcenter.ms/orgs/NiceLabs/apps/IDRW>
 
 ## Recommended Hardware
 
