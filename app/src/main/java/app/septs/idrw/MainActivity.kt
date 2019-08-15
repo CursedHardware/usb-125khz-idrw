@@ -9,6 +9,7 @@ import android.net.Uri
 import android.os.Bundle
 import android.os.Looper
 import android.provider.Settings
+import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
 import android.widget.Toast
@@ -60,12 +61,9 @@ class MainActivity : USBActivity() {
         }
 
         if (!BuildConfig.DEBUG) {
-            AppCenter.start(
-                application,
-                "84e74391-7043-45e8-a0a8-217ab98e0a5c",
-                Analytics::class.java,
-                Crashes::class.java
-            )
+            val appSecret = "84e74391-7043-45e8-a0a8-217ab98e0a5c"
+            AppCenter.start(application, appSecret, Analytics::class.java, Crashes::class.java)
+            AppCenter.setLogLevel(Log.VERBOSE);
         }
     }
 
