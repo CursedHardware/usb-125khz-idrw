@@ -3,7 +3,6 @@ package app.septs.idrw.usb
 import java.util.*
 
 
-
 object Packet {
     private val HEADER = byteArrayOf(0x01, 0x00, 0x00, 0x00, 0x00, 0x00, 0x08, 0x00)
     private const val STX: Byte = 0x02

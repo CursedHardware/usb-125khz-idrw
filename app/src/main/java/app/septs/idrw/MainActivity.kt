@@ -4,7 +4,6 @@ package app.septs.idrw
 import android.content.Context
 import android.content.Intent
 import android.content.pm.ActivityInfo
-import androidx.databinding.DataBindingUtil
 import android.net.Uri
 import android.os.Bundle
 import android.os.Looper
@@ -13,15 +12,17 @@ import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
 import android.widget.Toast
+import androidx.databinding.DataBindingUtil
 import app.septs.idrw.databinding.ActivityMainBinding
 import app.septs.idrw.tools.InputFilterValueRange
 import app.septs.idrw.tools.Keyboard
 import app.septs.idrw.usb.CardException
 import app.septs.idrw.usb.CardType
 import app.septs.idrw.usb.IDCard
-import com.microsoft.appcenter.AppCenter;
-import com.microsoft.appcenter.analytics.Analytics;
-import com.microsoft.appcenter.crashes.Crashes;
+import com.microsoft.appcenter.AppCenter
+import com.microsoft.appcenter.analytics.Analytics
+import com.microsoft.appcenter.crashes.Crashes
+import com.microsoft.appcenter.distribute.Distribute
 import kotlin.concurrent.thread
 
 
@@ -62,7 +63,13 @@ class MainActivity : USBActivity() {
 
         if (!BuildConfig.DEBUG) {
             val appSecret = "84e74391-7043-45e8-a0a8-217ab98e0a5c"
-            AppCenter.start(application, appSecret, Analytics::class.java, Crashes::class.java)
+            AppCenter.start(
+                application,
+                appSecret,
+                Analytics::class.java,
+                Crashes::class.java,
+                Distribute::class.java
+            )
             AppCenter.setLogLevel(Log.VERBOSE);
         }
     }
@@ -103,8 +110,8 @@ class MainActivity : USBActivity() {
         return true
     }
 
-    override fun onOptionsItemSelected(item: MenuItem?): Boolean {
-        when (item?.itemId) {
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        when (item.itemId) {
             R.id.menu_clear -> {
                 mCard.idCard = IDCard()
             }
