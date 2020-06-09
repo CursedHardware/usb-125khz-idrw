@@ -1,16 +1,26 @@
+<!-- markdownlint-disable MD033 -->
+
 # IFD Protocol
 
-This page is extracted from "艾富迪通讯协议v1.3(IS014443A+B+15693)"
+This page is extracted from "艾富迪通讯协议 v1.3(IS014443A+B+15693)"
 
 - USB HID Specification
-<br><https://www.usb.org/hid>
-- 艾富迪通讯协议v1.3(IS014443A+B+15693)
-<br><https://wenku.baidu.com/view/405cfb08f78a6529647d53af.html> ([PDF](IFD510.pdf))
+  <br><https://www.usb.org/hid>
+- 艾富迪通讯协议 v1.3(IS014443A+B+15693)
+  <br><https://wenku.baidu.com/view/405cfb08f78a6529647d53af.html> ([PDF](IFD510.pdf))
+
+## USB ID
+
+| Vendor ID | Product ID | State  |
+| --------- | ---------- | ------ |
+| 0xFFFF    | 0x0035     | TESTED |
+| 0x6688    | 0x6850     |        |
 
 ## USB-HID RFID Reader
 
 Initialize the device
-```
+
+```plain
 control transfer
     requestType:   ENDPOINT_IN | REQUEST_TYPE_STANDARD | RECIPIENT_INTERFACE
     request:       REQUEST_GET_DESCRIPTOR
@@ -22,7 +32,8 @@ control transfer
 ```
 
 Send packet
-```
+
+```plain
 control transfer
     requestType:   ENDPOINT_OUT | REQUEST_TYPE_CLASS | RECIPIENT_INTERFACE
     request:       HID_SET_REPORT
@@ -34,7 +45,8 @@ control transfer
 ```
 
 Receive packet
-```
+
+```plain
 control transfer
     requestType:   ENDPOINT_IN | REQUEST_TYPE_CLASS | RECIPIENT_INTERFACE
     request:       HID_GET_REPORT
@@ -46,7 +58,8 @@ control transfer
 ```
 
 HID Header
-```
+
+```plain
 without MF_WRITE
 [0x01, 0x00, 0x00, 0x00, 0x00, 0x00, 0x08, 0x00]
 
@@ -54,10 +67,9 @@ with MF_WRITE
 [0x01, 0x00, 0x00, 0x00, 0x00, 0x00, 0x1F, 0x00]
 ```
 
-
 ## Packet layout
 
-```
+```plain
 Host to Slave
 +-----+------------+-------------+---------+-------------+-----+-----+
 | STX | STATION-ID | DATA-LENGTH | COMMAND | DATA[0...n] | BCC | ETX |
@@ -90,7 +102,7 @@ STATION-ID:
 
 ## Command
 
-```
+```plain
 +---------+----------------+
 | Command |      Name      |
 +---------+----------------+
@@ -104,7 +116,7 @@ STATION-ID:
 
 ### MF_WRITE (0x21)
 
-```
+```plain
 Send data
 +------------+------+-----------------------+
 | DATA[0]    | 0x00 | MF_WRITE mode control |
@@ -134,7 +146,7 @@ Receive data (failed)
 
 ### MF_GET_SNR (0x25)
 
-```
+```plain
 Send data
 +---------+------+---------+
 | DATA[0] | 0x00 | Unknown |
@@ -155,10 +167,9 @@ Receive data (failed)
 +---------+------+-----------------+
 ```
 
-
 ### CONTROL_BUZZER (0x89)
 
-```
+```plain
 Send data
 +---------+--------------+----------------------------+
 | DATA[0] | Buzzer Cycle | 20 ms/cycle, max value: 50 |
@@ -180,7 +191,7 @@ Receive data (failed)
 
 ### LOCK_CARD based CONTROL_BUZZER
 
-```
+```plain
 Send data
 +---------+--------------+
 | DATA[0] | Buzzer Cycle |
@@ -197,7 +208,7 @@ Buzzer Count:
 
 ### RESET_READER based CONTROL_BUZZER
 
-```
+```plain
 Send data
 +---------+--------------+
 | DATA[0] | Buzzer Cycle |
@@ -211,7 +222,7 @@ Buzzer Count:
 
 ## Error Codes
 
-```
+```plain
 +------+-----------------------+
 | Code |      Description      |
 +------+-----------------------+
@@ -225,15 +236,17 @@ Buzzer Count:
 +------+-----------------------+
 ```
 
-## Control Logic
+## Control flow
 
 ### Read Card
-```
+
+```plain
 Send MF_GET_SNR
 ```
 
 ### Write Card
-```
+
+```plain
 Send LOCK_CARD (Unlock)
 Send MF_WRITE
 Send LOCK_CARD for lock
